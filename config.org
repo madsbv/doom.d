@@ -1,0 +1,648 @@
+#+title: Config
+* Initial notes
+** Doom modules to check flags and config options for while transferring old config
+- org
+- biblio
+- snippets
+  - Doom comes with its own default snippets. Consider looking at some of them, and in general see what snippets I use a lot.
+    - E.g. 'dis' snippet in org and latex, 'm', that kind of thing.
+- latex
+  - Set reftex bibliography and pdf file locations
+  - Choose pdf viewer and set up
+  - Set up cdlatex and org-cdlatex
+- ledger
+  - Copy over whatever legacy config is relevant
+** Doom modules to check flags and config for later
+- company
+- vertico
+- deft
+- doom
+- workspaces
+- zen
+- evil
+- fold
+- format
+- rust
+- sh
+- web
+- yaml
+- calendar
+- lookup
+* Package installation
+** Original doom package.el
+#+begin_src emacs-lisp :tangle packages.el
+;; -*- no-byte-compile: t; -*-
+;;; $DOOMDIR/packages.el
+
+;; To install a package with Doom you must declare them here and run 'doom sync'
+;; on the command line, then restart Emacs for the changes to take effect -- or
+;; use 'M-x doom/reload'.
+
+
+;; To install SOME-PACKAGE from MELPA, ELPA or emacsmirror:
+                                        ;(package! some-package)
+
+;; To install a package directly from a remote git repo, you must specify a
+;; `:recipe'. You'll find documentation on what `:recipe' accepts here:
+;; https://github.com/radian-software/straight.el#the-recipe-format
+                                        ;(package! another-package
+                                        ;  :recipe (:host github :repo "username/repo"))
+
+;; If the package you are trying to install does not contain a PACKAGENAME.el
+;; file, or is located in a subdirectory of the repo, you'll need to specify
+;; `:files' in the `:recipe':
+                                        ;(package! this-package
+                                        ;  :recipe (:host github :repo "username/repo"
+                                        ;           :files ("some-file.el" "src/lisp/*.el")))
+
+;; If you'd like to disable a package included with Doom, you can do so here
+;; with the `:disable' property:
+                                        ;(package! builtin-package :disable t)
+
+;; You can override the recipe of a built in package without having to specify
+;; all the properties for `:recipe'. These will inherit the rest of its recipe
+;; from Doom or MELPA/ELPA/Emacsmirror:
+                                        ;(package! builtin-package :recipe (:nonrecursive t))
+                                        ;(package! builtin-package-2 :recipe (:repo "myfork/package"))
+
+;; Specify a `:branch' to install a package from a particular branch or tag.
+;; This is required for some packages whose default branch isn't 'master' (which
+;; our package manager can't deal with; see radian-software/straight.el#279)
+                                        ;(package! builtin-package :recipe (:branch "develop"))
+
+;; Use `:pin' to specify a particular commit to install.
+                                        ;(package! builtin-package :pin "1a2b3c4d5e")
+
+
+;; Doom's packages are pinned to a specific commit and updated from release to
+;; release. The `unpin!' macro allows you to unpin single packages...
+                                        ;(unpin! pinned-package)
+;; ...or multiple packages
+                                        ;(unpin! pinned-package another-pinned-package)
+;; ...Or *all* packages (NOT RECOMMENDED; will likely break things)
+                                        ;(unpin! t)
+
+#+end_src
+** Personal package installation
+#+begin_src emacs-lisp :tangle packages.el
+(package! org-roam-bibtex)
+(package! org-roam-server)
+#+end_src
+
+* Original doom config.el
+#+begin_src emacs-lisp :tangle yes
+;;; $DOOMDIR/config.el -*- lexical-binding: t; -*-
+
+;; Place your private configuration here! Remember, you do not need to run 'doom
+;; sync' after modifying this file!
+
+
+;; Some functionality uses this to identify you, e.g. GPG configuration, email
+;; clients, file templates and snippets. It is optional.
+(setq user-full-name "Mads Bach Villadsen"
+      user-mail-address "mvilladsen@pm.me")
+
+;; Doom exposes five (optional) variables for controlling fonts in Doom:
+;;
+;; - `doom-font' -- the primary font to use
+;; - `doom-variable-pitch-font' -- a non-monospace font (where applicable)
+;; - `doom-big-font' -- used for `doom-big-font-mode'; use this for
+;;   presentations or streaming.
+;; - `doom-unicode-font' -- for unicode glyphs
+;; - `doom-serif-font' -- for the `fixed-pitch-serif' face
+;;
+;; See 'C-h v doom-font' for documentation and more examples of what they
+;; accept. For example:
+;;
+;;(setq doom-font (font-spec :family "Fira Code" :size 12 :weight 'semi-light)
+;;      doom-variable-pitch-font (font-spec :family "Fira Sans" :size 13))
+;;
+;; If you or Emacs can't find your font, use 'M-x describe-font' to look them
+;; up, `M-x eval-region' to execute elisp code, and 'M-x doom/reload-font' to
+;; refresh your font settings. If Emacs still can't find your font, it likely
+;; wasn't installed correctly. Font issues are rarely Doom issues!
+
+;; There are two ways to load a theme. Both assume the theme is installed and
+;; available. You can either set `doom-theme' or manually load a theme with the
+;; `load-theme' function. This is the default:
+(setq doom-theme 'doom-one)
+
+;; This determines the style of line numbers in effect. If set to `nil', line
+;; numbers are disabled. For relative line numbers, set this to `relative'.
+(setq display-line-numbers-type 'relative)
+
+;; If you use `org' and don't want your org files in the default location below,
+;; change `org-directory'. It must be set before org loads!
+(setq org-directory "~/org/")
+
+
+;; Whenever you reconfigure a package, make sure to wrap your config in an
+;; `after!' block, otherwise Doom's defaults may override your settings. E.g.
+;;
+;;   (after! PACKAGE
+;;     (setq x y))
+;;
+;; The exceptions to this rule:
+;;
+;;   - Setting file/directory variables (like `org-directory')
+;;   - Setting variables which explicitly tell you to set them before their
+;;     package is loaded (see 'C-h v VARIABLE' to look up their documentation).
+;;   - Setting doom variables (which start with 'doom-' or '+').
+;;
+;; Here are some additional functions/macros that will help you configure Doom.
+;;
+;; - `load!' for loading external *.el files relative to this one
+;; - `use-package!' for configuring packages
+;; - `after!' for running code after a package has loaded
+;; - `add-load-path!' for adding directories to the `load-path', relative to
+;;   this file. Emacs searches the `load-path' when you load packages with
+;;   `require' or `use-package'.
+;; - `map!' for binding new keys
+;;
+;; To get information about any of these functions/macros, move the cursor over
+;; the highlighted symbol at press 'K' (non-evil users must press 'C-c c k').
+;; This will open documentation for it, including demos of how they are used.
+;; Alternatively, use `C-h o' to look up a symbol (functions, variables, faces,
+;; etc).
+;;
+;; You can also try 'gd' (or 'C-c c d') to jump to their definition and see how
+;; they are implemented.
+
+#+end_src
+* File location variables
+#+begin_src emacs-lisp :tangle yes
+(setq! mbv/my-personal-directory "~/Dropbox/docs/"
+       mbv/my-org-directory (concat mbv/my-personal-directory "org/")
+       mbv/my-papers-directory (concat mbv/my-personal-directory "work/math-resources/sources/papers/")
+       mbv/my-org-roam-directory (concat mbv/my-personal-directory "work/math-resources/org-roam/")
+       mbv/my-paper-notes-directory (concat mbv/my-org-roam-directory "paper-notes/")
+       mbv/my-main-bib-file (concat mbv/my-personal-directory "work/math-resources/sources/papers.bib"))
+#+end_src
+* Config from legacy
+** desktop-save-mode 
+#+begin_src emacs-lisp :tangle yes
+  ;; Save buffers between restarts
+  (setq desktop-dirname (concat user-emacs-directory "desktop/")
+        desktop-base-file-name ".emacs.desktop"
+        desktop-base-lock-name (concat desktop-base-file-name ".lock")
+	;; Move (undo) history file to computer-specific directory.
+        savehist-file (concat desktop-dirname "history")
+        ;;desktop-files-not-to-save "" ; If filename matches given regexp, do not save buffer
+        desktop-path (list desktop-dirname)
+        desktop-save t
+        desktop-auto-save-timeout 30 ; Default auto-save timeout, made explicit
+        desktop-file-name-format 'tilde ; Save file paths relative to ~ (works in particular with Dropbox symlink)
+        desktop-restore-frames t
+        desktop-restore-in-current-display nil
+        desktop-restore-forces-onscreen nil)
+  (desktop-save-mode 1)
+  (save-place-mode 1)
+
+  ;; Save a list of recent files visited.
+  (recentf-mode 1)
+  (setq recentf-max-saved-items 1000) ;; just 20 is too recent
+
+  ;; Save minibuffer history
+  (savehist-mode 1)
+  (setq history-length 1000)
+#+end_src
+* Doom module config
+** word-wrap
+#+begin_src emacs-lisp
+;; enable word-wrap (almost) everywhere
+(+global-word-wrap-mode +1)
+#+end_src
+** biblio
+#+begin_src emacs-lisp :tangle yes
+(after! biblio
+  (setq! bibtex-completion-bibliography mbv/my-main-bib-file
+         citar-bibliography mbv/my-main-bib-file
+         bibtex-completion-library-path mbv/my-papers-directory
+         bibtex-completion-notes-path mbv/my-paper-notes-directory
+         citar-library-paths `(,mbv/my-papers-directory)
+         citar-notes-paths `(,mbv/my-paper-notes-directory)
+         bibtex-completion-pdf-field "file" ;; Read "file" field in bib file to find pdf files
+         bibtex-completion-find-additional-pdfs t ;; Find all files matching [bibtexkey]*.pdf
+         bibtex-completion-pdf-extension '(".pdf" ".djvu") ;; Match djvu files too. Other filetypes can also be added.
+         bibtex-autokey-year-length 4
+         bibtex-autokey-name-year-separator ""
+         bibtex-autokey-name-case-convert-function 'upcase-initials)
+  (citar-org-roam-mode))
+#+end_src
+*** org-noter
+#+begin_src emacs-lisp :tangle yes
+(after! org-noter
+  (setq! org-noter-hide-other nil
+         org-noter-notes-search-path mbv/my-paper-notes-directory))
+#+end_src
+** ledger
+#+begin_src emacs-lisp :tangle yes
+(after! ledger
+  (setq! ledger-complete-in-steps t
+         ledger-post-amount-alignment-column 62))
+#+end_src
+** latex
+*** RefTeX
+#+begin_src emacs-lisp :tangle yes
+(setq! reftex-default-bibliography mbv/my-main-bib-file)
+#+end_src
+*** PDF viewer
+#+begin_src emacs-lisp :tangle yes
+(setq! +latex-viewers '(pdf-tools))
+#+end_src
+*** cdlatex
+- cdlatex-command-alist lists keywords for tab-completion
+
+Note that the cdlatex variables have to be given a characters ASCII code, ? converts a character to its code (you might have to escape some chars with \). The elisp function string-to-char does the same (for the first char in a string), print and insert takes an ASCII code and either prints the corresponding char in the minibuffer, or inserts the char in the buffer.
+(Actually a char is its code, ? just instructs Emacs to treat the char as itself and not as a function name.)
+
+According to https://lists.gnu.org/archive/html/emacs-orgmode/2011-10/msg00716.html, you have to restart emacs or run (cdlatex-reset-mode) after changing this config.
+
+#+begin_src emacs-lisp :tangle yes
+;; Use cdlatex over yasnippet (should still default back to yasnippet).
+(map! :map cdlatex-mode-map
+      :i "TAB" #'cdlatex-tab)
+
+;; Sets cdlatex-math-modify-prefix to its default explicity, and changes math-symbol key.
+;; org-defkey is used to let cdlatex key interact correctly with other stuff.
+(setq cdlatex-math-modify-prefix ?')
+(setq cdlatex-math-symbol-prefix ?`) ; On danish keyboard layout, switch this to ?¨ instead
+(after! org (org-defkey org-cdlatex-mode-map "`" 'cdlatex-math-symbol))
+;; add symbols
+(setq cdlatex-math-symbol-alist
+      '((?F ("\\Phi"))
+        (?t ("\\tau" "\\otimes " "\\tan"))
+        (?. ("\\cdots" "\\ldots" "\\cdot"))
+        (?d ("\\delta" "\\partial" "\\bar{\\partial}"))
+        (?* ("\\times" "\\dagger"))
+        (?: ("\\colon"))
+        (?b ("\\beta" "\\bullet"))
+        (?+ ("\\oplus" "\\bigoplus" "\\cup"))))
+(setq cdlatex-math-modify-alist
+      '((?B "\\mathbb" nil t nil nil)))
+
+(setq cdlatex-use-dollar-to-ensure-math nil)
+#+end_src
+
+** org
+#+begin_src emacs-lisp           :tangle yes
+(setq! org-directory mbv/my-org-directory)
+(after! org
+  (setq! ;; Recursively check a list of directories, thanks to https://www.reddit.com/r/orgmode/comments/6q6cdk/adding_files_to_the_agenda_list_recursively/
+         ;; To specify single files, if necessary, would have to append them to org-agenda-files separately.
+         ;;(org-agenda-files (apply 'append
+           ;;                       (mapcar
+             ;;                      (lambda (directory)
+               ;;                      (directory-files-recursively
+                 ;;                     directory org-agenda-file-regexp))
+                   ;;                `(,mbv/my-org-directory)))) ;; Can add to the list containing ,mbv/my-org-directory
+
+         org-src-window-setup 'split-window-below
+         org-refile-allow-creating-parent-nodes 'confirm))
+#+end_src
+*** org/latex setup
+    :PROPERTIES:
+    :ID:       a1e22973-e0e1-497e-94de-1b4c291033c6
+    :END:
+    Some org/latex settings, and a preamble setup.
+**** Origin
+     The package list and classes are originally based on [[file:project-skeletons/homework/][this template]]. In addition to what's included here, that template also loads the packages:
+     - showkeys (in draft mode, shows labels where defined in output PDF)
+     - algorithm/pseudocode typesetting packages
+     - csquotes (adjust latex quote style)
+     - enumitem (control list formatting more carefully; used for good theorem environments)
+     - cref (cleveref; \cref{label} automatically writes, e.g., "Lemma 17.2" instead of just 17.2 if the label refers to a lemma. Means that I can easily change the lemma to a proposition without having to check consistency manually)
+     - fixme (create todo notes in latex source that block final compilation if not fixed)
+     - ntheorem
+     - epstopdf
+     - siunitx
+     The original template also includes codes for:
+     - setting up siunitx properly
+     - Alternate quote styles
+     - tikz setup; loading tikz-babel and tikz-cd, and defining commands for pushout and pullback squares
+     - extensive cref setup in both Danish and English
+     - custom fixme commands
+     - extensive ntheorem setup for all kinds of theorem and proof environments; uses enumitem to provide environment-specific list types (see theoremlist.tex)
+     - The command \\widebar in direct tex. The only package I know that provides this command is [[http://mirrors.rit.edu/CTAN/fonts/mathabx/mathtest.pdf][mathabx]], but that also changes many other things, and I don't know whether it's actively supported
+     - Typesetting commands for a host of categories. Most of that probably shouldn't be imported to here, instead a more flexible approach should be used except in specific cases.
+     - A multitude of custom math commands. Some of these should be imported here, others probably not; mainly a lot of the mathoperator declarations, maybe a few synonyms, should be included.
+       - Better might be to try to fit a bunch of things into cdlatex.
+
+**** Basic setup
+     Note that org-preview-latex-image-directory is set in [[id:05e79702-80f5-435a-b942-a67ee90e42b6][Theme]] since we switch it depending on whether we're using light or dark theme.
+ #+BEGIN_SRC emacs-lisp
+;; Whether to preview latex fragments whenopening new Org file. Might become slow in big files, in which case
+;; it can be disabled here or by adding the following on a per-file basis: #+STARTUP: nolatexpreview
+(setq org-startup-with-latex-preview 'nil)
+(setq org-latex-prefer-user-labels t)
+;; Modify scale of latex fragment previews to be more readable, default scale 1.0.
+;; (if (string= system-name-normalized "mbv-xps13")
+;;     (setq org-format-latex-options (plist-put org-format-latex-options :scale 1.0))
+;;     (setq org-format-latex-options (plist-put org-format-latex-options :scale 1.3)))
+;; Enable org-cdlatex in every org buffer
+(add-hook 'org-mode-hook 'turn-on-org-cdlatex)
+ #+END_SRC
+***** PROJ Imagemagick and tikz
+dvipng and dvisvgm do not support putting tikz code in previews. This can be done with imagemagick, but that's prone to bugs, especially around imagemagick updates.
+
+#+BEGIN_SRC emacs-lisp :tangle no
+(setq org-preview-latex-default-process 'dvisvgm)
+(eval-after-load "preview"
+  '(add-to-list 'preview-default-preamble "\\PreviewEnvironment{tikzpicture}" t))
+#+END_SRC
+
+At the time of writing (200429), ImageMagick throws a [[https://github.com/ImageMagick/ImageMagick/issues/884][warning]] about color space and grayscale images when trying to preview fragments. It does not affect output. According to the linked github issue (and own testing), adding -strip to the arguments to 'convert' removes the warning; there are other solutions in that thread.
+Note that trying to generate many fragments at once causes some slowdown, since fragment generation is not done asynchronously. However, fragments are cached, so this should not be a big deal.
+#+begin_src emacs-lisp :tangle no
+(plist-put (cdr (assoc 'imagemagick org-preview-latex-process-alist)) :image-converter '("convert -density %D -trim -strip -antialias %f -quality 100 %O"))
+#+end_src
+
+**** Package and macro setup
+ Make more LaTeX packages available for org and exported latex. These packages are added to preamble of exported latex. If t is specified, the package is also available when viewing latex snippets in org-mode.
+ #+begin_src emacs-lisp
+(after! org
+  (setq org-latex-packages-alist
+      '(("" "etoolbox" t) ;; programming logic for \abs, \norm, \inner commands
+        ("" "microtype" t) ;; typographic improvements
+        ("" "mathrsfs" t) ;; \mathscr font
+        ("AUTO" "babel" t) ;; gets passed options from \documentclass as well
+        ("" "tikz" t)
+        ("" "tikz-cd" t)
+        ("" "amsthm" t)
+        ("" "thmtools" t)
+        ("" "thm-restate" t)
+        ("" "xpatch" t))))
+ #+end_src
+
+ The latex preamble used for latex fragment previews is governed by org-format-latex-header, while export is governed by org-latex-classes and org-latex-default-class
+ To add more macros to both that preamble and (multiple) export preambles, we define a variable to hold macros, then append that to the other preambles.
+ LaTeX note: amsmath defines a bunch of standard operators [[http://mirror.utexas.edu/ctan/macros/latex/required/amsmath/amsopn.pdf][here]]. Some of these are 'incorrect', i.e. $\hom$ should typeset Hom, not hom. The LaTeX code "\let\hom\undefined" unbinds $\hom$, assuming \undefined is, in fact, undefined.
+ Semantic notes:
+  - $\id$ is the identity map
+  - $\ker,\coker,\im$ are kernel, cokernel, image of a function. \ker is defined by default.
+  - $\hom$ is a space of homomorphism, or the set of morphisms between two objects in a category
+  - $\ext$ is an Ext functor
+  - $\shom$ and $\sext$ are sheafy versions of their non-s namesakes
+  - $\tensor$ is tne tensor product of two modules/other
+  - $\spec$ is the affine scheme of a ring
+  - $\proj$ is the projective scheme of a graded ring
+  - \(\pic\) denotes Picard groups
+  - $\codim$ is codimension
+  - $\Supp$ denotes support of something, e.g. a sheaf
+  - \(\dualab{A}\) indicates the dual abelian variety of \(A\) (i.e. \(\pic^0(A)\)
+  - \(\sh F\): Typeface for sheaves
+  - \proofstep is for partitioning long proofs into individual steps, to be used inside \begin{proof} environment. From https://tex.stackexchange.com/questions/207309/how-to-nicely-split-proofs-into-different-parts
+ #+begin_src emacs-lisp
+(setq mbv/my-latex-macros
+"
+\\DeclareMathOperator\\id{id}
+\\DeclareMathOperator\\coker{coker}
+\\DeclareMathOperator\\im{im}
+\\DeclareMathOperator\\codim{codim}
+\\let\\hom\\undefined
+\\DeclareMathOperator\\hom{Hom}
+\\DeclareMathOperator\\shom{\\underline{Hom}}
+\\DeclareMathOperator\\ext{Ext}
+\\DeclareMathOperator\\sext{\\underline{Ext}}
+\\DeclareMathOperator\\tor{Tor}
+\\DeclareMathOperator\\rk{rk}
+\\newcommand\\tensor{\\otimes}
+\\DeclareMathOperator\\spec{Spec}
+\\DeclareMathOperator\\proj{Proj}
+\\DeclareMathOperator\\pic{Pic}
+\\DeclareMathOperator\\supp{Supp}
+\\newcommand\\dualab\\hat
+\\newcommand\\sh\\mathscr
+
+\\makeatletter
+\\newcounter{proofstep}
+\\xpretocmd{\\proof}{\\setcounter{proofstep}{0}}{}{}
+\\newcommand{\\proofstep}[1]{%
+  \\par
+  \\addvspace{\\medskipamount}%
+  \\stepcounter{proofstep}%
+  \\noindent\\emph{Step \\theproofstep: #1}\\par\\nobreak\\smallskip
+  \\@afterheading
+}
+\\makeatother")
+ #+end_src
+
+ Actually add the macros defined above to preview and export headers, and define custom export class:
+ #+begin_src emacs-lisp
+;; Required to load the variables we modify below
+(after! org
+  (require 'ox-latex)
+
+  (setq mbv/org-format-latex-header-default
+        "\\documentclass{article}
+\\usepackage[usenames]{color}
+[PACKAGES]
+[DEFAULT-PACKAGES]
+\\pagestyle{empty}             % do not remove
+% The settings below are copied from fullpage.sty
+\\setlength{\\textwidth}{\\paperwidth}
+\\addtolength{\\textwidth}{-3cm}
+\\setlength{\\oddsidemargin}{1.5cm}
+\\addtolength{\\oddsidemargin}{-2.54cm}
+\\setlength{\\evensidemargin}{\\oddsidemargin}
+\\setlength{\\textheight}{\\paperheight}
+\\addtolength{\\textheight}{-\\headheight}
+\\addtolength{\\textheight}{-\\headsep}
+\\addtolength{\\textheight}{-\\footskip}
+\\addtolength{\\textheight}{-3cm}
+\\setlength{\\topmargin}{1.5cm}
+\\addtolength{\\topmargin}{-2.54cm}")
+  (setq org-format-latex-header (concat mbv/org-format-latex-header-default mbv/my-latex-macros))
+  ;; Define new class based on memoir
+  (add-to-list 'org-latex-classes
+               `("mbv/my-memoir-article"
+                 ,(concat
+                   "\\pdfoutput=1 % Required to make arXiv use pdflatex
+\\documentclass[letterpaper,oneside,openany,article,english,10pt]{memoir}
+[DEFAULT-PACKAGES]
+[PACKAGES]
+\\declaretheorem[numberwithin=chapter]{theorem}  % Theorem environments using amsthm + thmtools
+\\declaretheorem[sibling=theorem]{corollary}
+\\declaretheorem[sibling=theorem]{lemma}
+\\declaretheorem[sibling=theorem]{proposition}
+\\declaretheorem[sibling=theorem]{definition}
+\\declaretheorem[sibling=theorem]{remark}
+\\declaretheorem[sibling=theorem]{conjecture}"
+                   mbv/my-latex-macros)
+                 ("\\chapter{%s}" . "\\chapter*{%s}")
+                 ("\\section{%s}" . "\\section*{%s}")
+                 ("\\subsection{%s}" . "\\subsection*{%s}")
+                 ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
+                 ("\\paragraph{%s}" . "\\paragraph*{%s}")
+                 ("\\subparagraph{%s}" . "\\subparagraph*{%s}")))
+
+  (add-to-list 'org-latex-classes
+               `("mbv/my-amsart"
+                 ,(concat
+                   "\\pdfoutput=1 % Required to make arXiv use pdflatex
+\\documentclass{amsart}
+[DEFAULT-PACKAGES]
+[PACKAGES]
+\\declaretheorem[numberwithin=section]{theorem}  % Theorem environments using amsthm + thmtools
+\\declaretheorem[sibling=theorem]{corollary}
+\\declaretheorem[sibling=theorem]{lemma}
+\\declaretheorem[sibling=theorem]{proposition}
+\\declaretheorem[sibling=theorem]{definition}
+\\declaretheorem[sibling=theorem]{remark}
+\\declaretheorem[sibling=theorem]{conjecture}"
+                   mbv/my-latex-macros)
+                 ("\\section{%s}" . "\\section*{%s}")
+                 ("\\subsection{%s}" . "\\subsection*{%s}")
+                 ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
+                 ("\\paragraph{%s}" . "\\paragraph*{%s}")
+                 ("\\subparagraph{%s}" . "\\subparagraph*{%s}")))
+
+  ;; Set my memoir class as default for export
+  (setq org-latex-default-class "mbv/my-amsart")
+
+  ;; Add some bookmark-related options to the default hyperref template
+  (setq org-latex-hyperref-template
+        "\\hypersetup{
+ pdfauthor={%a},
+ pdftitle={%t},
+ pdfkeywords={%k},
+ pdfsubject={%d},
+ pdflang={%L},
+ final,
+ bookmarks=true,
+ bookmarksnumbered=true,
+ bookmarksdepth=subsubsection}
+"))
+ #+end_src
+*** org-id
+    :PROPERTIES:
+    :ID:       e63541f2-d373-42cb-ace7-d69e8ba7afe1
+    :END:
+Sets up org-id for consistent links that allow changing headlines/file locations without guaranteed breakage. Source is [[https://github.com/tkf/org-mode/blob/master/lisp/org-id.el][here]], some info taken from [[https://emacs.stackexchange.com/questions/12391/insert-org-id-link-at-point-via-outline-path-completion][here]]. With this setup, org-store-link and org-insert-link link via the id property instead of file location and section name; id is created as needed when org-store-link is called.
+#+BEGIN_SRC emacs-lisp
+(after! org
+  (require 'org-id)
+  ;; Always use ID's, create if doesn't exist
+  (setq org-id-link-to-org-use-id t)
+  ;; Make the default explicit
+  (setq org-id-track-globally t)
+  (setq org-id-locations-file (concat user-emacs-directory ".org-id-locations"))
+  ;; Update id locations on startup
+  (org-id-update-id-locations)
+
+  ;; Completion function for id's when running org-insert-link. Taken from https://emacs.stackexchange.com/questions/12391/insert-org-id-link-at-point-via-outline-path-completion
+  (defun org-id-complete-link (&optional arg)
+    "Create an id: link using completion"
+    (concat "id:"
+            (org-id-get-with-outline-path-completion)))
+  (org-link-set-parameters "id" :complete 'org-id-complete-link))
+#+END_SRC
+
+*** org-roam
+#+begin_src emacs-lisp :tangle yes
+(after! org-roam
+  (setq! org-roam-directory mbv/my-org-roam-directory
+         org-roam-db-location (concat org-roam-directory "org-roam.db")
+         org-roam-buffer-no-delete-other-windows t) ; make org-roam buffer sticky
+  (org-roam-db-autosync-mode)
+  (require 'org-roam-protocol))
+#+end_src
+**** TODO org-roam-bibtex
+#+begin_src emacs-lisp :tangle yes
+(add-hook! org-roam-mode (org-roam-bibtex-mode))
+#+end_src
+
+Legacy (not quite functional) config.
+TODO: Make this actually work well.
+#+begin_src emacs-lisp :tangle no
+(after! org-roam
+  (setq!
+   orb-preformat-keywords '("=key=" "title" "url" "file" "author-or-editor" "keywords" "citekey")
+   org-roam-capture-templates
+   '(("d" "default" plain "%?"
+      :target (file+head "%<%Y%m%d%H%M%S>-${slug}.org" "#+title: ${title}")
+      :unnarrowed t)
+     ("r" "ref" plain
+      "#+ROAM_REFS: ${ref}
+- keywords :: ${keywords}
+%?
+\n* ${title}\n  :PROPERTIES:\n  :URL: ${url}\n  :AUTHOR: ${author-or-editor}\n  :NOTER_DOCUMENT: %(orb-process-file-field \"${=key=}\")\n  :NOTER_PAGE: \n  :END:\n\n"
+      :target (file+head "${citekey}.org" "#+TITLE: ${citekey}: ${title}")
+      :unnarrowed t))))
+;;   (setq orb-templates
+;;         '(("r" "ref" plain (function org-roam-capture--get-point)
+;;            ""
+;;            :file-name "${slug}"
+;;            :head "#+TITLE: ${=key=}: ${title}
+;; \n#+ROAM_KEY: ${ref}
+;; - keywords :: ${keywords}
+
+;; \n* ${title}\n  :PROPERTIES:\n  :Custom_ID: ${=key=}\n  :URL: ${url}\n  :AUTHOR: ${author-or-editor}\n  :NOTER_DOCUMENT: %(orb-process-file-field \"${=key=}\")\n  :NOTER_PAGE: \n  :END:\n\n"
+
+;;            :unnarrowed t))))
+
+#+end_src
+**** org-roam-server
+#+begin_src emacs-lisp :tangle yes
+(after! org-roam-server
+  (setq! org-roam-server-host "127.0.0.1"
+         org-roam-server-port 8080
+         org-roam-server-authenticate nil
+         org-roam-server-export-inline-images t
+         org-roam-server-serve-files nil
+         org-roam-server-served-file-extensions '("pdf" "mp4" "ogv")
+         org-roam-server-network-poll t
+         org-roam-server-network-arrows nil
+         org-roam-server-network-label-truncate t
+         org-roam-server-network-label-truncate-length 60
+         org-roam-server-network-label-wrap-length 20))
+#+end_src
+** deft
+#+begin_src emacs-lisp :tangle yes
+(after! deft
+  (setq! deft-recursive t
+  deft-use-filter-string-for-filename t
+  deft-default-extension "org"
+  deft-directory org-roam-directory)
+  (defun cm/deft-parse-title (file contents)
+    "Parse the given FILE and CONTENTS and determine the title.
+  If `deft-use-filename-as-title' is nil, the title is taken to
+  be the first non-empty line of the FILE.  Else the base name of the FILE is
+  used as title."
+      (let ((begin (string-match "^#\\+[tT][iI][tT][lL][eE]: .*$" contents)))
+	(if begin
+	    (string-trim (substring contents begin (match-end 0)) "#\\+[tT][iI][tT][lL][eE]: *" "[\n\t ]+")
+	  (deft-base-filename file))))
+
+    (advice-add 'deft-parse-title :override #'cm/deft-parse-title)
+
+    (setq deft-strip-summary-regexp
+	  (concat "\\("
+		  "[\n\t]" ;; blank
+		  "\\|^#\\+[[:alpha:]_]+:.*$" ;; org-mode metadata
+		  "\\|^:PROPERTIES:\n\\(.+\n\\)+:END:\n"
+		  "\\)")))
+#+end_src
+** snippet
+#+begin_src emacs-lisp :tangle yes
+;; Nested snippets
+(after! snippet
+  (setq! yas-triggers-in-field t))
+#+end_src
+** magit
+#+begin_src emacs-lisp :tangle yes
+;; Making magit and yadm (utility I use for managing dotfiles) cooperate. Run (magit-status "/yadm::"). Taken from: https://github.com/TheLocehiliosan/yadm/blob/master/yadm.md
+(after! magit
+  (require 'tramp)
+  (add-to-list 'tramp-methods
+               '("yadm"
+                 (tramp-login-program "yadm")
+                 (tramp-login-args (("enter")))
+                 (tramp-login-env (("SHELL") ("/bin/sh")))
+                 (tramp-remote-shell "/bin/sh")
+                 (tramp-remote-shell-args ("-c"))))
+
+  (defun yadm ()
+    (interactive)
+    (magit-status "/yadm::")))
+#+end_src
