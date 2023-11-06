@@ -1,17 +1,9 @@
 #+title: Config
 * Initial notes
 ** Doom modules to check flags and config options for while transferring old config
-- org
-- biblio
 - snippets
   - Doom comes with its own default snippets. Consider looking at some of them, and in general see what snippets I use a lot.
     - E.g. 'dis' snippet in org and latex, 'm', that kind of thing.
-- latex
-  - Set reftex bibliography and pdf file locations
-  - Choose pdf viewer and set up
-  - Set up cdlatex and org-cdlatex
-- ledger
-  - Copy over whatever legacy config is relevant
 ** Doom modules to check flags and config for later
 - company
 - vertico
@@ -87,6 +79,7 @@
 #+begin_src emacs-lisp :tangle packages.el
 (package! org-roam-bibtex)
 (package! org-roam-server)
+(package! org-ref)
 #+end_src
 
 * Original doom config.el
@@ -130,11 +123,6 @@
 ;; This determines the style of line numbers in effect. If set to `nil', line
 ;; numbers are disabled. For relative line numbers, set this to `relative'.
 (setq display-line-numbers-type 'relative)
-
-;; If you use `org' and don't want your org files in the default location below,
-;; change `org-directory'. It must be set before org loads!
-(setq org-directory "~/org/")
-
 
 ;; Whenever you reconfigure a package, make sure to wrap your config in an
 ;; `after!' block, otherwise Doom's defaults may override your settings. E.g.
@@ -180,7 +168,7 @@
 #+end_src
 * Config from legacy
 ** desktop-save-mode 
-#+begin_src emacs-lisp :tangle yes
+#+begin_src emacs-lisp :tangle no
   ;; Save buffers between restarts
   (setq desktop-dirname (concat user-emacs-directory "desktop/")
         desktop-base-file-name ".emacs.desktop"
@@ -214,7 +202,7 @@
 #+end_src
 ** biblio
 #+begin_src emacs-lisp :tangle yes
-(after! biblio
+(after! citar
   (setq! bibtex-completion-bibliography mbv/my-main-bib-file
          citar-bibliography mbv/my-main-bib-file
          bibtex-completion-library-path mbv/my-papers-directory
@@ -231,13 +219,13 @@
 #+end_src
 *** org-noter
 #+begin_src emacs-lisp :tangle yes
-(after! org-noter
+(after! org-mode
   (setq! org-noter-hide-other nil
          org-noter-notes-search-path mbv/my-paper-notes-directory))
 #+end_src
 ** ledger
 #+begin_src emacs-lisp :tangle yes
-(after! ledger
+(after! ledger-mode
   (setq! ledger-complete-in-steps t
          ledger-post-amount-alignment-column 62))
 #+end_src
@@ -267,7 +255,7 @@ According to https://lists.gnu.org/archive/html/emacs-orgmode/2011-10/msg00716.h
 ;; org-defkey is used to let cdlatex key interact correctly with other stuff.
 (setq cdlatex-math-modify-prefix ?')
 (setq cdlatex-math-symbol-prefix ?`) ; On danish keyboard layout, switch this to ?¨ instead
-(after! org (org-defkey org-cdlatex-mode-map "`" 'cdlatex-math-symbol))
+(after! org-mode (org-defkey org-cdlatex-mode-map "`" 'cdlatex-math-symbol))
 ;; add symbols
 (setq cdlatex-math-symbol-alist
       '((?F ("\\Phi"))
@@ -287,7 +275,7 @@ According to https://lists.gnu.org/archive/html/emacs-orgmode/2011-10/msg00716.h
 ** org
 #+begin_src emacs-lisp           :tangle yes
 (setq! org-directory mbv/my-org-directory)
-(after! org
+(after! org-mode
   (setq! ;; Recursively check a list of directories, thanks to https://www.reddit.com/r/orgmode/comments/6q6cdk/adding_files_to_the_agenda_list_recursively/
          ;; To specify single files, if necessary, would have to append them to org-agenda-files separately.
          ;;(org-agenda-files (apply 'append
@@ -360,7 +348,7 @@ Note that trying to generate many fragments at once causes some slowdown, since 
 **** Package and macro setup
  Make more LaTeX packages available for org and exported latex. These packages are added to preamble of exported latex. If t is specified, the package is also available when viewing latex snippets in org-mode.
  #+begin_src emacs-lisp
-(after! org
+(after! org-mode
   (setq org-latex-packages-alist
       '(("" "etoolbox" t) ;; programming logic for \abs, \norm, \inner commands
         ("" "microtype" t) ;; typographic improvements
@@ -430,7 +418,7 @@ Note that trying to generate many fragments at once causes some slowdown, since 
  Actually add the macros defined above to preview and export headers, and define custom export class:
  #+begin_src emacs-lisp
 ;; Required to load the variables we modify below
-(after! org
+(after! org-mode
   (require 'ox-latex)
 
   (setq mbv/org-format-latex-header-default
@@ -520,7 +508,7 @@ Note that trying to generate many fragments at once causes some slowdown, since 
     :END:
 Sets up org-id for consistent links that allow changing headlines/file locations without guaranteed breakage. Source is [[https://github.com/tkf/org-mode/blob/master/lisp/org-id.el][here]], some info taken from [[https://emacs.stackexchange.com/questions/12391/insert-org-id-link-at-point-via-outline-path-completion][here]]. With this setup, org-store-link and org-insert-link link via the id property instead of file location and section name; id is created as needed when org-store-link is called.
 #+BEGIN_SRC emacs-lisp
-(after! org
+(after! org-mode
   (require 'org-id)
   ;; Always use ID's, create if doesn't exist
   (setq org-id-link-to-org-use-id t)
@@ -540,7 +528,7 @@ Sets up org-id for consistent links that allow changing headlines/file locations
 
 *** org-roam
 #+begin_src emacs-lisp :tangle yes
-(after! org-roam
+(after! org-roam-mode
   (setq! org-roam-directory mbv/my-org-roam-directory
          org-roam-db-location (concat org-roam-directory "org-roam.db")
          org-roam-buffer-no-delete-other-windows t) ; make org-roam buffer sticky
@@ -555,7 +543,7 @@ Sets up org-id for consistent links that allow changing headlines/file locations
 Legacy (not quite functional) config.
 TODO: Make this actually work well.
 #+begin_src emacs-lisp :tangle no
-(after! org-roam
+(after! org-roam-mode
   (setq!
    orb-preformat-keywords '("=key=" "title" "url" "file" "author-or-editor" "keywords" "citekey")
    org-roam-capture-templates
@@ -584,7 +572,7 @@ TODO: Make this actually work well.
 #+end_src
 **** org-roam-server
 #+begin_src emacs-lisp :tangle yes
-(after! org-roam-server
+(after! org-roam-server-mode
   (setq! org-roam-server-host "127.0.0.1"
          org-roam-server-port 8080
          org-roam-server-authenticate nil
@@ -596,6 +584,45 @@ TODO: Make this actually work well.
          org-roam-server-network-label-truncate t
          org-roam-server-network-label-truncate-length 60
          org-roam-server-network-label-wrap-length 20))
+#+end_src
+*** org-ref
+This is only used to get access to functions used to transition away from org-ref to org-cite.
+That said, the hydra provided by org-ref is quite nice...
+TODO: Figure out how to manage bib files directly in emacs; org-ref may be part of that.
+
+TODO: Rewrite this to use type citation instead of citation-reference. Then we don't have to do the manual format, it'll support global pre and post-fix. We should also find a way to record post-blank on parsing, and pass that to the citation.
+#+begin_src emacs-lisp :tangle yes
+(after! org-ref
+  (setq! org-ref-insert-cite-function 'org-cite-insert))
+(defun mbv/org-ref-v3-to-org-cite ()
+  (interactive)
+  (require 'org-ref)
+  (require 'org-ref-citation-links)
+  (require 'oc)
+  (require 'org-element)
+  (let ((cites (reverse (org-element-map (org-element-parse-buffer) 'link
+                          (lambda (lnk)
+                            (when (member (org-element-property :type lnk)
+                                          (mapcar 'car org-ref-cite-types))
+                              lnk))))))
+    (cl-loop for cite in cites do
+             (cl--set-buffer-substring
+              (org-element-property :begin cite)
+              (org-element-property :end cite)
+              (format "[cite:%s]%s"
+                      (mbv/org-ref-element-to-org-cite-citation-string cite)
+                      (make-string (org-element-property :post-blank cite) ?\ ))))))
+
+(defun mbv/org-ref-element-to-org-cite-citation-string (cite)
+  (let ((data (org-ref-parse-cite-path (org-element-property :path cite))))
+    (let ((cite-string
+           (org-element-interpret-data
+            (cl-loop for cite-reference in (plist-get data :references) collect
+                     `(citation-reference
+                       (:key ,(plist-get cite-reference :key)
+                        :prefix ,(plist-get cite-reference :prefix)
+                        :suffix ,(plist-get cite-reference :suffix)))))))
+      (substring cite-string 0 -1))))
 #+end_src
 ** deft
 #+begin_src emacs-lisp :tangle yes
@@ -626,7 +653,7 @@ TODO: Make this actually work well.
 ** snippet
 #+begin_src emacs-lisp :tangle yes
 ;; Nested snippets
-(after! snippet
+(after! yasnippet
   (setq! yas-triggers-in-field t))
 #+end_src
 ** magit
