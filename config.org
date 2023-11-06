@@ -600,20 +600,29 @@ TODO: Rewrite this to use type citation instead of citation-reference. Then we d
   (require 'org-ref-citation-links)
   (require 'oc)
   (require 'org-element)
+  ;; Collect org-ref citation link objects
   (let ((cites (reverse (org-element-map (org-element-parse-buffer) 'link
                           (lambda (lnk)
                             (when (member (org-element-property :type lnk)
                                           (mapcar 'car org-ref-cite-types))
                               lnk))))))
     (cl-loop for cite in cites do
+             ;; Substitute each org-ref link with the corresponding org-cite link.
+             ;; Does not currently support global suffix and prefix, but I don't
+             ;; think I ever use that
              (cl--set-buffer-substring
               (org-element-property :begin cite)
               (org-element-property :end cite)
               (format "[cite:%s]%s"
                       (mbv/org-ref-element-to-org-cite-citation-string cite)
+                      ;; Blank space after the link is part of the cite object;
+                      ;; reinsert it.
                       (make-string (org-element-property :post-blank cite) ?\ ))))))
 
 (defun mbv/org-ref-element-to-org-cite-citation-string (cite)
+  ;; Use the builtin org-ref parser to turn citation link into a plist,
+  ;; then convert that plist into the internal org format citation-reference
+  ;; for citations, and use the built-in org interpreter to turn this into a string.
   (let ((data (org-ref-parse-cite-path (org-element-property :path cite))))
     (let ((cite-string
            (org-element-interpret-data
@@ -622,6 +631,7 @@ TODO: Rewrite this to use type citation instead of citation-reference. Then we d
                        (:key ,(plist-get cite-reference :key)
                         :prefix ,(plist-get cite-reference :prefix)
                         :suffix ,(plist-get cite-reference :suffix)))))))
+      ;; Remove unnecessary trailing semicolon.
       (substring cite-string 0 -1))))
 #+end_src
 ** deft
