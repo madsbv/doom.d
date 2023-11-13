@@ -1,10 +1,9 @@
 #+title: Config
-* Initial notes
-** Doom modules to check flags and config options for while transferring old config
+* TODO Initial notes
+** TODO Doom modules to check flags and config options for while transferring old config
 - snippets
   - Doom comes with its own default snippets. Consider looking at some of them, and in general see what snippets I use a lot.
-    - E.g. 'dis' snippet in org and latex, 'm', that kind of thing.
-** Doom modules to check flags and config for later
+** TODO Doom modules to check flags and config for later
 - company
 - vertico
 - deft
@@ -20,6 +19,8 @@
 - yaml
 - calendar
 - lookup
+** TODO Keybindings
+My Yabai keybindings on alt conflict a lot with Emacs. Consider moving to cmd, freeing up native MacOS keybindings as needed.
 * Package installation
 ** Original doom package.el
 #+begin_src emacs-lisp :tangle packages.el
@@ -195,12 +196,25 @@
   (setq history-length 1000)
 #+end_src
 * Doom module config
+** evil
+#+begin_src emacs-lisp :tangle yes
+(setq! evil-cross-lines t
+       evil-snipe-scope 'buffer
+       evil-want-fine-undo t)
+;; Disable default yank to system clipboard.
+;; To use system clipboard, use + register, e.g.
+;; +dd, +cw, +y.
+(setq! select-enable-clipboard nil)
+
+#+end_src
 ** word-wrap
 #+begin_src emacs-lisp
 ;; enable word-wrap (almost) everywhere
 (+global-word-wrap-mode +1)
 #+end_src
-** biblio
+** TODO biblio
+Modify 'arxiv-get-pdf-add-bibtex-entry' to use different file name from bibtex key (add title to pdf file name).
+Maybe define a general function to rectify pdf file name for any entry, and call it after arxiv-get-pdf-add-bibtex-entry?
 #+begin_src emacs-lisp :tangle yes
 (after! citar
   (setq! bibtex-completion-bibliography mbv/my-main-bib-file
@@ -213,9 +227,15 @@
          bibtex-completion-find-additional-pdfs t ;; Find all files matching [bibtexkey]*.pdf
          bibtex-completion-pdf-extension '(".pdf" ".djvu") ;; Match djvu files too. Other filetypes can also be added.
          bibtex-autokey-year-length 4
+             bibtex-autokey-titlewords 0
          bibtex-autokey-name-year-separator ""
          bibtex-autokey-name-case-convert-function 'upcase-initials)
   (citar-org-roam-mode))
+(map! :after citar
+      :leader
+      :prefix "r"
+      "o" #'citar-open
+      "i" #'citar-insert-citation)
 #+end_src
 *** org-noter
 #+begin_src emacs-lisp :tangle yes
@@ -259,15 +279,19 @@ According to https://lists.gnu.org/archive/html/emacs-orgmode/2011-10/msg00716.h
 ;; add symbols
 (setq cdlatex-math-symbol-alist
       '((?F ("\\Phi"))
-        (?t ("\\tau" "\\otimes " "\\tan"))
+        (?t ("\\tau" "\\otimes" "\\tan"))
         (?. ("\\cdots" "\\ldots" "\\cdot"))
         (?d ("\\delta" "\\partial" "\\bar{\\partial}"))
         (?* ("\\times" "\\dagger"))
         (?: ("\\colon"))
         (?b ("\\beta" "\\bullet"))
+        (?\{ ("\\subseteq" "\\subset"))
+        (?\} ("\\supseteq" "\\supset"))   
         (?+ ("\\oplus" "\\bigoplus" "\\cup"))))
 (setq cdlatex-math-modify-alist
-      '((?B "\\mathbb" nil t nil nil)))
+      '((?B "\\mathbb" nil t nil nil)
+        (?s "\\mathscr" nil t nil nil)
+        (?f "\\mathfrak" nil t nil nil)))
 
 (setq cdlatex-use-dollar-to-ensure-math nil)
 #+end_src
@@ -633,6 +657,19 @@ TODO: Rewrite this to use type citation instead of citation-reference. Then we d
                         :suffix ,(plist-get cite-reference :suffix)))))))
       ;; Remove unnecessary trailing semicolon.
       (substring cite-string 0 -1))))
+#+end_src
+*** [?] org-noter
+I really want org-noter-insert-note bound to "i", but I don't know how to do that.
+TODO: Make the insert functions also enter insert-mode in the org buffer.
+#+begin_src emacs-lisp :tangle yes
+(map! :map org-noter-doc-mode-map
+      "M-i" #'org-noter-insert-note
+      "C-M-i" #'org-noter-insert-precise-note)
+#+end_src
+** pdf-view
+#+begin_src emacs-lisp :tangle yes
+(after! pdf-view-mode
+  (setq! pdf-view-resize-factor 1.1))
 #+end_src
 ** deft
 #+begin_src emacs-lisp :tangle yes
