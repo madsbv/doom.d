@@ -16,6 +16,7 @@
 
 ;; Must be set before loading evil, see https://evil.readthedocs.io/en/latest/settings.html#elispobj-evil-respect-visual-line-mode
 (setq! evil-respect-visual-line-mode t)
+(add-to-list 'default-frame-alist '(undecorated . t))
 
 (doom! :input
        ;;bidi              ; (tfel ot) thgir etirw uoy gnipleh
