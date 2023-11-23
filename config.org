@@ -305,7 +305,8 @@ According to https://lists.gnu.org/archive/html/emacs-orgmode/2011-10/msg00716.h
 (setq cdlatex-math-modify-alist
       '((?B "\\mathbb" nil t nil nil)
         (?s "\\mathscr" nil t nil nil)
-        (?f "\\mathfrak" nil t nil nil)))
+        (?f "\\mathfrak" nil t nil nil)
+        (?o "\\operatorname" nil t nil nil)))
 
 (setq cdlatex-use-dollar-to-ensure-math nil)
 #+end_src
@@ -694,6 +695,8 @@ TODO: Make the insert functions also enter insert-mode in the org buffer.
 #+begin_src emacs-lisp :tangle yes
 (after! pdf-view-mode
   (setq! pdf-view-resize-factor 1.1))
+(map! :mode pdf-view-mode
+      :nv "`" #'pdf-view-jump-to-register)
 #+end_src
 ** deft
 #+begin_src emacs-lisp :tangle yes
