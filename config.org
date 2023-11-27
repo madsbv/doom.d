@@ -1,12 +1,29 @@
 #+title: Config
 * TODO Notes
-** TODO Doom modules to check flags and config options for while transferring old config
-- snippets
-  - Doom comes with its own default snippets. Consider looking at some of them, and in general see what snippets I use a lot.
+** Ideas
+*** Org-mode font lock optimization ideas
+- Play with font-lock-maximum-decoration
+- Play with (setq org-highlight-latex-and-related '(latex script entities)), other combinations
+- Do some debugging/instrumentation a la https://www.emacswiki.org/emacs/FontLockSpeed
+*** tree-sitter
+#+begin_src emacs-lisp :tangle no
+;; From https://github.com/emacs-tree-sitter/tree-sitter-langs/pull/157
+(setq tree-sitter-langs--bin-dir (concat tree-sitter-langs-grammar-dir "bin/"))
+(setq treesit-extra-load-path (append (list (tree-sitter-langs--bin-dir))))
+(defun tree-sitter-langs-build--fixup-shared-objects-for-treesit ()
+   "tree-sitter-langs-build releases grammars as LANG.so, but treesit needs libtree-sitter-LANG.so"
+   (dolist (file (directory-files (tree-sitter-langs--bin-dir) 'full
+                                  (concat "\\" (car tree-sitter-load-suffixes) "$")))
+     ;; make symlink libtree-sitter-c.so -> c.so
+     (make-symbolic-link file
+                         (concat (file-name-as-directory (file-name-directory file))
+                                 "libtree-sitter-"
+                                 (file-name-nondirectory file)))))
+(tree-sitter-langs-build--fixup-shared-objects-for-treesit)
+#+end_src
 ** TODO Doom modules to check flags and config for later
 - company
 - vertico
-- deft
 - doom
 - workspaces
 - zen
@@ -82,6 +99,7 @@ Evil-lion seems like a useful tool to learn, but current bindings also conflict 
 (package! org-roam-bibtex)
 (package! org-roam-server)
 (package! org-ref)
+(package! launchctl)
 #+end_src
 
 * Original doom config.el
@@ -195,6 +213,10 @@ Evil-lion seems like a useful tool to learn, but current bindings also conflict 
   ;; Save minibuffer history
   (savehist-mode 1)
   (setq history-length 1000)
+#+end_src
+* Emacs server
+#+begin_src emacs-lisp :tangle yes
+(server-start)
 #+end_src
 * Doom module config
 ** evil
