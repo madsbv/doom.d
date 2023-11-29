@@ -336,7 +336,7 @@ According to https://lists.gnu.org/archive/html/emacs-orgmode/2011-10/msg00716.h
 ** org
 #+begin_src emacs-lisp           :tangle yes
 (setq! org-directory mbv/my-org-directory)
-(after! org-mode
+(after! org
   (setq! ;; Recursively check a list of directories, thanks to https://www.reddit.com/r/orgmode/comments/6q6cdk/adding_files_to_the_agenda_list_recursively/
          ;; To specify single files, if necessary, would have to append them to org-agenda-files separately.
          ;;(org-agenda-files (apply 'append
@@ -419,21 +419,6 @@ Note that trying to generate many fragments at once causes some slowdown, since 
 #+end_src
 
 **** Package and macro setup
- Make more LaTeX packages available for org and exported latex. These packages are added to preamble of exported latex. If t is specified, the package is also available when viewing latex snippets in org-mode.
- #+begin_src emacs-lisp
-(setq org-latex-packages-alist
-      '(("" "etoolbox" t) ;; programming logic for \abs, \norm, \inner commands
-        ("" "microtype" t) ;; typographic improvements
-        ("" "mathrsfs" t) ;; \mathscr font
-        ("AUTO" "babel" t) ;; gets passed options from \documentclass as well
-        ("" "tikz" t)
-        ("" "tikz-cd" t)
-        ("" "amsthm" t)
-        ("" "thmtools" t)
-        ("" "thm-restate" t)
-        ("" "xpatch" t)))
- #+end_src
-
  The latex preamble used for latex fragment previews is governed by org-format-latex-header, while export is governed by org-latex-classes and org-latex-default-class
  To add more macros to both that preamble and (multiple) export preambles, we define a variable to hold macros, then append that to the other preambles.
  LaTeX note: amsmath defines a bunch of standard operators [[http://mirror.utexas.edu/ctan/macros/latex/required/amsmath/amsopn.pdf][here]]. Some of these are 'incorrect', i.e. $\hom$ should typeset Hom, not hom. The LaTeX code "\let\hom\undefined" unbinds $\hom$, assuming \undefined is, in fact, undefined.
@@ -453,8 +438,22 @@ Note that trying to generate many fragments at once causes some slowdown, since 
   - \(\sh F\): Typeface for sheaves
   - \proofstep is for partitioning long proofs into individual steps, to be used inside \begin{proof} environment. From https://tex.stackexchange.com/questions/207309/how-to-nicely-split-proofs-into-different-parts
  #+begin_src emacs-lisp
-(setq mbv/my-latex-macros
-      "
+(after! org
+  ;; Make more LaTeX packages available for org and exported latex. These packages are added to preamble of exported latex. If t is specified, the package is also available when viewing latex snippets in org-mode.
+  (setq org-latex-packages-alist
+        '(("" "etoolbox" t) ;; programming logic for \abs, \norm, \inner commands
+          ("" "microtype" t) ;; typographic improvements
+          ("" "mathrsfs" t) ;; \mathscr font
+          ("AUTO" "babel" t) ;; gets passed options from \documentclass as well
+          ("" "tikz" t)
+          ("" "tikz-cd" t)
+          ("" "amsthm" t)
+          ("" "thmtools" t)
+          ("" "thm-restate" t)
+          ("" "xpatch" t)))
+
+  (setq mbv/my-latex-macros
+        "
 \\DeclareMathOperator\\id{id}
 \\DeclareMathOperator\\coker{coker}
 \\DeclareMathOperator\\im{im}
@@ -485,15 +484,14 @@ Note that trying to generate many fragments at once causes some slowdown, since 
   \\@afterheading
 }
 \\makeatother")
- #+end_src
 
- Actually add the macros defined above to preview and export headers, and define custom export class:
- #+begin_src emacs-lisp
-;; Required to load the variables we modify below
-(require 'ox-latex)
+;;;; Actually add the macros defined above to preview and export headers, and define custom export class:
 
-(setq mbv/org-format-latex-header-default
-      "\\documentclass{article}
+  ;; Required to load the variables we modify below
+  (require 'ox-latex)
+
+  (setq mbv/org-format-latex-header-default
+        "\\documentclass{article}
 \\usepackage[usenames]{color}
 [PACKAGES]
 [DEFAULT-PACKAGES]
@@ -511,12 +509,12 @@ Note that trying to generate many fragments at once causes some slowdown, since 
 \\addtolength{\\textheight}{-3cm}
 \\setlength{\\topmargin}{1.5cm}
 \\addtolength{\\topmargin}{-2.54cm}")
-(setq org-format-latex-header (concat mbv/org-format-latex-header-default mbv/my-latex-macros))
-;; Define new class based on memoir
-(add-to-list 'org-latex-classes
-             `("mbv/my-memoir-article"
-               ,(concat
-                 "\\pdfoutput=1 % Required to make arXiv use pdflatex
+  (setq org-format-latex-header (concat mbv/org-format-latex-header-default mbv/my-latex-macros))
+  ;; Define new class based on memoir
+  (add-to-list 'org-latex-classes
+               `("mbv/my-memoir-article"
+                 ,(concat
+                   "\\pdfoutput=1 % Required to make arXiv use pdflatex
 \\documentclass[letterpaper,oneside,openany,article,english,10pt]{memoir}
 [DEFAULT-PACKAGES]
 [PACKAGES]
@@ -527,18 +525,18 @@ Note that trying to generate many fragments at once causes some slowdown, since 
 \\declaretheorem[sibling=theorem]{definition}
 \\declaretheorem[sibling=theorem]{remark}
 \\declaretheorem[sibling=theorem]{conjecture}"
-                 mbv/my-latex-macros)
-               ("\\chapter{%s}" . "\\chapter*{%s}")
-               ("\\section{%s}" . "\\section*{%s}")
-               ("\\subsection{%s}" . "\\subsection*{%s}")
-               ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
-               ("\\paragraph{%s}" . "\\paragraph*{%s}")
-               ("\\subparagraph{%s}" . "\\subparagraph*{%s}")))
+                   mbv/my-latex-macros)
+                 ("\\chapter{%s}" . "\\chapter*{%s}")
+                 ("\\section{%s}" . "\\section*{%s}")
+                 ("\\subsection{%s}" . "\\subsection*{%s}")
+                 ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
+                 ("\\paragraph{%s}" . "\\paragraph*{%s}")
+                 ("\\subparagraph{%s}" . "\\subparagraph*{%s}")))
 
-(add-to-list 'org-latex-classes
-             `("mbv/my-amsart"
-               ,(concat
-                 "\\pdfoutput=1 % Required to make arXiv use pdflatex
+  (add-to-list 'org-latex-classes
+               `("mbv/my-amsart"
+                 ,(concat
+                   "\\pdfoutput=1 % Required to make arXiv use pdflatex
 \\documentclass{amsart}
 [DEFAULT-PACKAGES]
 [PACKAGES]
@@ -549,19 +547,19 @@ Note that trying to generate many fragments at once causes some slowdown, since 
 \\declaretheorem[sibling=theorem]{definition}
 \\declaretheorem[sibling=theorem]{remark}
 \\declaretheorem[sibling=theorem]{conjecture}"
-                 mbv/my-latex-macros)
-               ("\\section{%s}" . "\\section*{%s}")
-               ("\\subsection{%s}" . "\\subsection*{%s}")
-               ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
-               ("\\paragraph{%s}" . "\\paragraph*{%s}")
-               ("\\subparagraph{%s}" . "\\subparagraph*{%s}")))
+                   mbv/my-latex-macros)
+                 ("\\section{%s}" . "\\section*{%s}")
+                 ("\\subsection{%s}" . "\\subsection*{%s}")
+                 ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
+                 ("\\paragraph{%s}" . "\\paragraph*{%s}")
+                 ("\\subparagraph{%s}" . "\\subparagraph*{%s}")))
 
-;; Set my memoir class as default for export
-(setq org-latex-default-class "mbv/my-amsart")
+  ;; Set my memoir class as default for export
+  (setq org-latex-default-class "mbv/my-amsart")
 
-;; Add some bookmark-related options to the default hyperref template
-(setq org-latex-hyperref-template
-      "\\hypersetup{
+  ;; Add some bookmark-related options to the default hyperref template
+  (setq org-latex-hyperref-template
+        "\\hypersetup{
  pdfauthor={%a},
  pdftitle={%t},
  pdfkeywords={%k},
@@ -571,7 +569,7 @@ Note that trying to generate many fragments at once causes some slowdown, since 
  bookmarks=true,
  bookmarksnumbered=true,
  bookmarksdepth=subsubsection}
-")
+"))
  #+end_src
 *** org-id
     :PROPERTIES:
@@ -579,7 +577,7 @@ Note that trying to generate many fragments at once causes some slowdown, since 
     :END:
 Sets up org-id for consistent links that allow changing headlines/file locations without guaranteed breakage. Source is [[https://github.com/tkf/org-mode/blob/master/lisp/org-id.el][here]], some info taken from [[https://emacs.stackexchange.com/questions/12391/insert-org-id-link-at-point-via-outline-path-completion][here]]. With this setup, org-store-link and org-insert-link link via the id property instead of file location and section name; id is created as needed when org-store-link is called.
 #+BEGIN_SRC emacs-lisp
-(after! org-mode
+(after! org
   (require 'org-id)
   ;; Always use ID's, create if doesn't exist
   (setq org-id-link-to-org-use-id t)
@@ -664,46 +662,46 @@ TODO: Figure out how to manage bib files directly in emacs; org-ref may be part 
 TODO: Rewrite this to use type citation instead of citation-reference. Then we don't have to do the manual format, it'll support global pre and post-fix. We should also find a way to record post-blank on parsing, and pass that to the citation.
 #+begin_src emacs-lisp :tangle yes
 (after! org-ref
-  (setq! org-ref-insert-cite-function 'org-cite-insert))
-(defun mbv/org-ref-v3-to-org-cite ()
-  (interactive)
-  (require 'org-ref)
-  (require 'org-ref-citation-links)
-  (require 'oc)
-  (require 'org-element)
-  ;; Collect org-ref citation link objects
-  (let ((cites (reverse (org-element-map (org-element-parse-buffer) 'link
-                          (lambda (lnk)
-                            (when (member (org-element-property :type lnk)
-                                          (mapcar 'car org-ref-cite-types))
-                              lnk))))))
-    (cl-loop for cite in cites do
-             ;; Substitute each org-ref link with the corresponding org-cite link.
-             ;; Does not currently support global suffix and prefix, but I don't
-             ;; think I ever use that
-             (cl--set-buffer-substring
-              (org-element-property :begin cite)
-              (org-element-property :end cite)
-              (format "[cite:%s]%s"
-                      (mbv/org-ref-element-to-org-cite-citation-string cite)
-                      ;; Blank space after the link is part of the cite object;
-                      ;; reinsert it.
-                      (make-string (org-element-property :post-blank cite) ?\ ))))))
+  (setq! org-ref-insert-cite-function 'org-cite-insert)
+  (defun mbv/org-ref-v3-to-org-cite ()
+    (interactive)
+    (require 'org-ref)
+    (require 'org-ref-citation-links)
+    (require 'oc)
+    (require 'org-element)
+    ;; Collect org-ref citation link objects
+    (let ((cites (reverse (org-element-map (org-element-parse-buffer) 'link
+                            (lambda (lnk)
+                              (when (member (org-element-property :type lnk)
+                                            (mapcar 'car org-ref-cite-types))
+                                lnk))))))
+      (cl-loop for cite in cites do
+               ;; Substitute each org-ref link with the corresponding org-cite link.
+               ;; Does not currently support global suffix and prefix, but I don't
+               ;; think I ever use that
+               (cl--set-buffer-substring
+                (org-element-property :begin cite)
+                (org-element-property :end cite)
+                (format "[cite:%s]%s"
+                        (mbv/org-ref-element-to-org-cite-citation-string cite)
+                        ;; Blank space after the link is part of the cite object;
+                        ;; reinsert it.
+                        (make-string (org-element-property :post-blank cite) ?\ ))))))
 
-(defun mbv/org-ref-element-to-org-cite-citation-string (cite)
-  ;; Use the builtin org-ref parser to turn citation link into a plist,
-  ;; then convert that plist into the internal org format citation-reference
-  ;; for citations, and use the built-in org interpreter to turn this into a string.
-  (let ((data (org-ref-parse-cite-path (org-element-property :path cite))))
-    (let ((cite-string
-           (org-element-interpret-data
-            (cl-loop for cite-reference in (plist-get data :references) collect
-                     `(citation-reference
-                       (:key ,(plist-get cite-reference :key)
-                        :prefix ,(plist-get cite-reference :prefix)
-                        :suffix ,(plist-get cite-reference :suffix)))))))
-      ;; Remove unnecessary trailing semicolon.
-      (substring cite-string 0 -1))))
+  (defun mbv/org-ref-element-to-org-cite-citation-string (cite)
+    ;; Use the builtin org-ref parser to turn citation link into a plist,
+    ;; then convert that plist into the internal org format citation-reference
+    ;; for citations, and use the built-in org interpreter to turn this into a string.
+    (let ((data (org-ref-parse-cite-path (org-element-property :path cite))))
+      (let ((cite-string
+             (org-element-interpret-data
+              (cl-loop for cite-reference in (plist-get data :references) collect
+                       `(citation-reference
+                         (:key ,(plist-get cite-reference :key)
+                          :prefix ,(plist-get cite-reference :prefix)
+                          :suffix ,(plist-get cite-reference :suffix)))))))
+        ;; Remove unnecessary trailing semicolon.
+        (substring cite-string 0 -1)))))
 #+end_src
 *** [?] org-noter
 I really want org-noter-insert-note bound to "i", but I don't know how to do that.
