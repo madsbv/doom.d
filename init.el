@@ -25,11 +25,11 @@
        ;;layout            ; auie,ctsrnm is the superior home row
 
        :completion
-       company             ; the ultimate code completion backend
+       (company +childframe +tng) ; the ultimate code completion backend
        ;;helm              ; the *other* search engine for love and life
        ;;ido               ; the other *other* search engine...
        ;;ivy               ; a search engine for love and life
-       vertico             ; the search engine of the future
+       (vertico +childframe +icons) ; the search engine of the future
 
        :ui
        deft                ; notational velocity for Emacs
@@ -101,7 +101,7 @@
        ;;ein               ; tame Jupyter notebooks with emacs
        (eval +overlay)     ; run code, run (also, repls)
        ;;gist              ; interacting with github gists
-       lookup              ; navigate your code and its documentation
+       (lookup +dictionary +docsets +offline) ; navigate your code and its documentation
        (lsp +peek)         ; M-x vscode
        (magit +forge)      ; a git porcelain for Emacs
        ;;make              ; run make tasks from Emacs
@@ -122,7 +122,7 @@
        :lang
        ;;agda              ; types of types of types of types...
        ;;beancount         ; mind the GAAP
-       (cc +lsp)           ; C > C++ == 1
+       ;;(cc +lsp)           ; C > C++ == 1
        ;;clojure           ; java with a lisp
        ;;common-lisp       ; if you've seen one lisp, you've seen them all
        ;;coq               ; proofs-as-programs
@@ -144,7 +144,7 @@
        ;;gdscript          ; the language you waited for
        ;;(go +lsp)         ; the hipster dialect
        ;;(graphql +lsp)    ; Give queries a REST
-       (haskell +lsp +tree-sitter)    ; a language that's lazier than I am
+       ;;(haskell +lsp +tree-sitter)    ; a language that's lazier than I am
        ;;hy                ; readability of scheme w/ speed of python
        ;;idris             ; a language you can depend on
        (json +tree-sitter) ; At least it ain't XML
@@ -177,10 +177,10 @@
        (sh +tree-sitter)   ; she sells {ba,z,fi}sh shells on the C xor
        ;;sml
        ;;solidity          ; do you need a blockchain? No.
-       swift               ; who asked for emoji variables?
+       ;;swift               ; who asked for emoji variables?
        ;;terra             ; Earth and Moon in alignment for performance.
        (web +lsp +tree-sitter)               ; the tubes
-       (yaml +tree-sitter) ; JSON, but readable
+       (yaml +lsp +tree-sitter) ; JSON, but readable
        ;;zig               ; C, but simpler
 
        :email

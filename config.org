@@ -23,19 +23,9 @@
 #+end_src
 ** TODO Doom modules to check flags and config for later
 - company
+  - Useful
 - vertico
-- doom
-- workspaces
-- zen
-- evil
-- fold
-- format
-- rust
-- sh
-- web
-- yaml
-- calendar
-- lookup
+  - Useful
 
 ** TODO evil-lion
 Evil-lion seems like a useful tool to learn, but current bindings also conflict with org-mode. Do some rebinding.
@@ -99,7 +89,8 @@ Evil-lion seems like a useful tool to learn, but current bindings also conflict 
 (package! org-roam-bibtex)
 (package! org-roam-server)
 (package! org-ref)
-(package! launchctl)
+;; Package for managing scheduled jobs on MacOS (launchctl is modern CRON). Superseded by LaunchControl app.
+;(package! launchctl)
 #+end_src
 
 * Original doom config.el
@@ -219,6 +210,10 @@ Evil-lion seems like a useful tool to learn, but current bindings also conflict 
 (server-start)
 #+end_src
 * Doom module config
+** doom
+#+begin_src emacs-lisp :tangle yes
+(setq! doom-theme 'doom-molokai)
+#+end_src
 ** evil
 #+begin_src emacs-lisp :tangle yes
 (setq! evil-cross-lines t
@@ -229,6 +224,20 @@ Evil-lion seems like a useful tool to learn, but current bindings also conflict 
 ;; +dd, +cw, +y.
 (setq! select-enable-clipboard nil)
 
+(map! "s-c" #'copy-to-clipboard
+      "s-v" #'paste-from-clipboard)
+
+;; From https://emacs.stackexchange.com/questions/12122/how-to-access-os-clipboard-using-emacs-evil
+(defun paste-from-clipboard ()
+  (interactive)
+  (setq x-select-enable-clipboard t)
+  (yank)
+  (setq x-select-enable-clipboard nil))
+(defun copy-to-clipboard()
+  (interactive)
+  (setq x-select-enable-clipboard t)
+  (kill-ring-save (region-beginning) (region-end))
+  (setq x-select-enable-clipboard nil))
 #+end_src
 ** company
 #+begin_src emacs-lisp :tangle yes
@@ -241,6 +250,10 @@ Evil-lion seems like a useful tool to learn, but current bindings also conflict 
      "RET" nil
      "<return>" nil
      "C-<return>" #'company-complete-selection)
+#+end_src
+** vertico
+#+begin_src emacs-lisp :tangle yes
+(setq! consult-locate-args "locate -i")
 #+end_src
 ** word-wrap
 #+begin_src emacs-lisp
@@ -711,6 +724,34 @@ TODO: Make the insert functions also enter insert-mode in the org buffer.
       "M-i" #'org-noter-insert-note
       "C-M-i" #'org-noter-insert-precise-note)
 #+end_src
+** calendar
+*** TODO org-gcal
+TODO: Actually integrate with Org and start using.
+- https://200ok.ch/posts/2022-02-13_integrating_org_mode_agenda_into_other_calendar_apps.html
+- https://github.com/kidd/org-gcal.el
+
+Set "echo 'allow-loopback-pinentry' >> .gnupg/gpg-agent.conf && gpgconf --reload gpg-agent". Note also that there is currently a bug in Emacs integration with gpg version 2.4.x for x>0 (https://dev.gnupg.org/T6481), seems that there's a patch on the way though. Currently (231130) I have gpg pinned to version 2.4.0 in Homebrew.
+#+begin_src emacs-lisp :tangle yes
+(setq org-gcal-client-id "33033572708-h0679g3cnald3pvk15l27ia562p6fej8.apps.googleusercontent.com"
+      org-gcal-client-secret "GOCSPXxm1CLX68pQZl50yWaqTNCSEMZ9HW"
+      org-gcal-fetch-file-alist `(("madsbv96@gmail.com" . ,(concat org-directory "calendar-madsbv96.org"))
+                                  ("318301d6be94b800863929948dc400142680118568b177d65627f84cbbb93a7a@group.calendar.google.com" . ,(concat org-directory "calendar-timekeeping.org"))))
+(setq plstore-cache-passphrase-for-symmetric-encryption t)
+(require 'org-gcal)
+(org-gcal-reload-client-id-secret)
+
+#+end_src
+*** TODO calfw
+TODO: Integration with org-agenda involves switching this to pull directly from agenda with cfw:org-create-source instead.
+#+begin_src emacs-lisp :tangle yes
+(defun mbv/open-calendar ()
+  (interactive)
+  (cfw:open-calendar-buffer
+   :contents-sources
+   (list
+    (cfw:org-create-file-source "timekeeping" (concat org-directory "calendar-timekeeping.org") "Green")
+    (cfw:org-create-file-source "madsbv96" (concat org-directory "calendar-madsbv96.org") "Red"))))
+#+end_src
 ** pdf-view
 #+begin_src emacs-lisp :tangle yes
 (after! pdf-view-mode
@@ -758,14 +799,14 @@ TODO: Make the insert functions also enter insert-mode in the org buffer.
 (after! magit
   (require 'tramp)
   (add-to-list 'tramp-methods
-               '("yadm"
-                 (tramp-login-program "yadm")
+               '("mbv/yadm"
+                 (tramp-login-program "mbv/yadm")
                  (tramp-login-args (("enter")))
                  (tramp-login-env (("SHELL") ("/bin/sh")))
                  (tramp-remote-shell "/bin/sh")
                  (tramp-remote-shell-args ("-c"))))
 
-  (defun yadm ()
+  (defun mbv/yadm ()
     (interactive)
     (magit-status "/yadm::")))
 #+end_src
