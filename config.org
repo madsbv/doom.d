@@ -730,7 +730,17 @@ TODO: Actually integrate with Org and start using.
 - https://200ok.ch/posts/2022-02-13_integrating_org_mode_agenda_into_other_calendar_apps.html
 - https://github.com/kidd/org-gcal.el
 
-Set "echo 'allow-loopback-pinentry' >> .gnupg/gpg-agent.conf && gpgconf --reload gpg-agent". Note also that there is currently a bug in Emacs integration with gpg version 2.4.x for x>0 (https://dev.gnupg.org/T6481), seems that there's a patch on the way though. Currently (231130) I have gpg pinned to version 2.4.0 in Homebrew.
+Set "echo 'allow-loopback-pinentry' >> .gnupg/gpg-agent.conf && gpgconf --reload gpg-agent". Note also that there is currently a bug in Emacs integration with gpg version 2.4.x for x>0 (https://dev.gnupg.org/T6481), seems that there's a patch on the way though.
+As of 231130, I have manually patched gnupg (brew reinstall -is) and pinned gnupg in brew to 2.4.3. Check that bug has been fixed before upgrading.
+
+Homebrew GPG patching instructions:
+1. 'brew reinstall -si gpg' - collects sources and puts you in a shell in the build directory. Tells you a prefix to install to, in this case /opt/homebrew/Cellar/gnupg/2.4.3
+2. Patch the sources, e.g. download the raw diff of a patch and 'git apply' it. In this case the patch is https://files.gnupg.net/file/data/3un4erk3tjnseburvkuy/PHID-FILE-hqe3gegzy7m6xb755z73/file
+   1. You may need to manually fit things together.
+3. For most projects, there will be some ./configure, make, make check, make install business to go through. Do:
+   1. Check the corresponding brewfile for configure commands that might be needed, and set the --prefix flag to configure. To find the brew file, try locate gpg | grep \.rb if brew edit gpg doesn't work.
+   2. The build commands will look something like: 'mkdir build && cd build && ../configure --prefix=/opt/homebrew/Cellar/gnupg/2.4.3 --enable-all-tests --with-pinentry-pgm=/opt/homebrew/bin/pinentry && make && make install && exit'
+
 #+begin_src emacs-lisp :tangle yes
 (setq org-gcal-client-id "33033572708-h0679g3cnald3pvk15l27ia562p6fej8.apps.googleusercontent.com"
       org-gcal-client-secret "GOCSPXxm1CLX68pQZl50yWaqTNCSEMZ9HW"
@@ -799,8 +809,8 @@ TODO: Integration with org-agenda involves switching this to pull directly from 
 (after! magit
   (require 'tramp)
   (add-to-list 'tramp-methods
-               '("mbv/yadm"
-                 (tramp-login-program "mbv/yadm")
+               '("yadm"
+                 (tramp-login-program "yadm")
                  (tramp-login-args (("enter")))
                  (tramp-login-env (("SHELL") ("/bin/sh")))
                  (tramp-remote-shell "/bin/sh")
@@ -809,4 +819,42 @@ TODO: Integration with org-agenda involves switching this to pull directly from 
   (defun mbv/yadm ()
     (interactive)
     (magit-status "/yadm::")))
+#+end_src
+
+** mu4e
+GMail is hostile to clients, and setting up mbsync with its OAuth2 requirements is terrible. It is possible with some extra scripting: https://github.com/MarcvdSluys/SundryNotes/blob/master/mbsync-with-gmail-oauth2.org
+I don't want to use that method due to fragility and probable maintenance cost. Switching to Proton is probably better all around.
+
+There is a solution with NotMuch: https://github.com/gauteh/lieer
+It is still a Python script though.
+
+TODO: Set up imapnotify for syncing emails automatically. https://gitlab.com/shackra/goimapnotify
+
+TODO: Set up HU email.
+#+begin_src emacs-lisp :tangle yes
+(set-email-account! "mvilladsen@pm.me"
+                    '((mu4e-sent-folder . "/proton/Sent")
+                      (mu4e-drafts-folder     . "/proton/Drafts")
+                      (mu4e-trash-folder      . "/proton/Trash")
+                      (mu4e-refile-folder     . "/proton/All Mail")
+                      (mu4e-compose-signature . "Best,\nMads")
+                      ;; (+mu4e-personal-addresses . "mvilladsen@pm.me")
+                      (smtpmail-smtp-user     . "mvilladsen@pm.me")
+                      (smtpmail-smtp-server . "127.0.0.1")
+                      (smtpmail-smtp-service . 1025)
+                      (smtpmail-stream-type . ssl)))
+
+
+
+;; mu4e-maildir-shortcuts would be useful to set, but use the new format (see docs).
+;; Should be per-account. Does doom already do anything useful?
+
+(setq mu4e-change-filenames-when-moving t ; avoid sync conflicts
+      mu4e-update-interval (* 10 60) ; check mail 10 minutes
+      mu4e-compose-format-flowed t ; re-flow mail so it's not hard wrapped
+      mu4e-get-mail-command "mbsync -a")
+
+
+
+(setq message-send-mail-function 'smtpmail-send-it)
 #+end_src
