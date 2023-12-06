@@ -89,8 +89,7 @@ Evil-lion seems like a useful tool to learn, but current bindings also conflict 
 (package! org-roam-bibtex)
 (package! org-roam-server)
 (package! org-ref)
-;; Package for managing scheduled jobs on MacOS (launchctl is modern CRON). Superseded by LaunchControl app.
-;(package! launchctl)
+(package! org-fragtog)
 #+end_src
 
 * Original doom config.el
@@ -129,7 +128,7 @@ Evil-lion seems like a useful tool to learn, but current bindings also conflict 
 ;; There are two ways to load a theme. Both assume the theme is installed and
 ;; available. You can either set `doom-theme' or manually load a theme with the
 ;; `load-theme' function. This is the default:
-(setq doom-theme 'doom-one)
+;; (setq doom-theme 'doom-one)
 
 ;; This determines the style of line numbers in effect. If set to `nil', line
 ;; numbers are disabled. For relative line numbers, set this to `relative'.
@@ -209,9 +208,11 @@ Evil-lion seems like a useful tool to learn, but current bindings also conflict 
 #+begin_src emacs-lisp :tangle yes
 (server-start)
 #+end_src
-* Doom module config
+* Packages and Doom module config
 ** doom
 #+begin_src emacs-lisp :tangle yes
+(setq! doom-molokai-brighter-comments t)
+(setq! doom-molokai-brighter-modeline t)
 (setq! doom-theme 'doom-molokai)
 #+end_src
 ** evil
@@ -723,6 +724,10 @@ TODO: Make the insert functions also enter insert-mode in the org buffer.
 (map! :map org-noter-doc-mode-map
       "M-i" #'org-noter-insert-note
       "C-M-i" #'org-noter-insert-precise-note)
+#+end_src
+*** org-fragtog
+#+begin_src emacs-lisp :tangle yes
+(add-hook 'org-mode-hook 'org-fragtog-mode)
 #+end_src
 ** calendar
 *** TODO org-gcal
