@@ -361,7 +361,11 @@ According to https://lists.gnu.org/archive/html/emacs-orgmode/2011-10/msg00716.h
                    ;;                `(,mbv/my-org-directory)))) ;; Can add to the list containing ,mbv/my-org-directory
 
          org-src-window-setup 'split-window-below
-         org-refile-allow-creating-parent-nodes 'confirm))
+         org-refile-allow-creating-parent-nodes 'confirm
+         org-return-follows-link t))
+;; Not sure whether something like this is needed.
+;; (map! :mode org-mode
+;;       :n "RET" nil)
 #+end_src
 *** org/latex setup
     :PROPERTIES:
@@ -392,18 +396,18 @@ According to https://lists.gnu.org/archive/html/emacs-orgmode/2011-10/msg00716.h
        - Better might be to try to fit a bunch of things into cdlatex.
 
 **** Basic setup
-     Note that org-preview-latex-image-directory is set in [[id:05e79702-80f5-435a-b942-a67ee90e42b6][Theme]] since we switch it depending on whether we're using light or dark theme.
  #+BEGIN_SRC emacs-lisp
-;; Whether to preview latex fragments whenopening new Org file. Might become slow in big files, in which case
+;; Whether to preview latex fragments when opening new Org file. Might become slow in big files, in which case
 ;; it can be disabled here or by adding the following on a per-file basis: #+STARTUP: nolatexpreview
 (setq org-startup-with-latex-preview 'nil)
 (setq org-latex-prefer-user-labels t)
-;; Modify scale of latex fragment previews to be more readable, default scale 1.0.
-;; (if (string= system-name-normalized "mbv-xps13")
-;;     (setq org-format-latex-options (plist-put org-format-latex-options :scale 1.0))
-;;     (setq org-format-latex-options (plist-put org-format-latex-options :scale 1.3)))
-;; Enable org-cdlatex in every org buffer
+(setq org-format-latex-options (plist-put org-format-latex-options :scale 1.0))
+Enable org-cdlatex in every org buffer
 (add-hook 'org-mode-hook 'turn-on-org-cdlatex)
+
+(defun mbv/clear-org-latex-preview-cache ()
+    (interactive)
+  (dired-delete-file org-preview-latex-image-directory 'always t))
  #+END_SRC
 **** PROJ Org-TeX compilation tools
 dvipng and dvisvgm do not support putting tikz code in previews. This can be done with imagemagick, but that's prone to bugs, especially around imagemagick updates.
@@ -464,7 +468,8 @@ Note that trying to generate many fragments at once causes some slowdown, since 
           ("" "amsthm" t)
           ("" "thmtools" t)
           ("" "thm-restate" t)
-          ("" "xpatch" t)))
+          ("" "xpatch" t)
+          ("autostyle" "csquotes" t)))
 
   (setq mbv/my-latex-macros
         "
