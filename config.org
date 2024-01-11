@@ -401,11 +401,13 @@ According to https://lists.gnu.org/archive/html/emacs-orgmode/2011-10/msg00716.h
  #+BEGIN_SRC emacs-lisp
 ;; Whether to preview latex fragments when opening new Org file. Might become slow in big files, in which case
 ;; it can be disabled here or by adding the following on a per-file basis: #+STARTUP: nolatexpreview
-(setq org-startup-with-latex-preview 'nil)
-(setq org-latex-prefer-user-labels t)
-(setq org-latex-reference-command "\\autoref{%s}")
+(setq org-startup-with-latex-preview 'nil
+      org-latex-prefer-user-labels t
+      org-latex-reference-command "\\autoref{%s}"
+      org-latex-caption-above t)
 (after! org-mode
-  (setq org-format-latex-options (plist-put org-format-latex-options :scale 1.0)))
+  ;; (setq org-format-latex-options (plist-put org-format-latex-options :scale 1.0))
+  (plist-put org-format-latex-options :scale 1.0))
 ;; Enable org-cdlatex in every org buffer
 (add-hook 'org-mode-hook 'turn-on-org-cdlatex)
 
