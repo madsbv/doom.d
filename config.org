@@ -90,6 +90,7 @@ Evil-lion seems like a useful tool to learn, but current bindings also conflict 
 (package! org-roam-server)
 (package! org-ref)
 (package! org-fragtog)
+(package! sage-shell-mode)
 #+end_src
 
 * Original doom config.el
@@ -342,6 +343,7 @@ According to https://lists.gnu.org/archive/html/emacs-orgmode/2011-10/msg00716.h
       '((?B "\\mathbb" nil t nil nil)
         (?s "\\mathscr" nil t nil nil)
         (?f "\\mathfrak" nil t nil nil)
+        (?T "\\widebar" nil t nil nil)
         (?o "\\operatorname" nil t nil nil)))
 
 (setq cdlatex-use-dollar-to-ensure-math nil)
@@ -401,12 +403,14 @@ According to https://lists.gnu.org/archive/html/emacs-orgmode/2011-10/msg00716.h
 ;; it can be disabled here or by adding the following on a per-file basis: #+STARTUP: nolatexpreview
 (setq org-startup-with-latex-preview 'nil)
 (setq org-latex-prefer-user-labels t)
-(setq org-format-latex-options (plist-put org-format-latex-options :scale 1.0))
-Enable org-cdlatex in every org buffer
+(setq org-latex-reference-command "\\autoref{%s}")
+(after! org-mode
+  (setq org-format-latex-options (plist-put org-format-latex-options :scale 1.0)))
+;; Enable org-cdlatex in every org buffer
 (add-hook 'org-mode-hook 'turn-on-org-cdlatex)
 
 (defun mbv/clear-org-latex-preview-cache ()
-    (interactive)
+  (interactive)
   (dired-delete-file org-preview-latex-image-directory 'always t))
  #+END_SRC
 **** PROJ Org-TeX compilation tools
@@ -467,6 +471,7 @@ Note that trying to generate many fragments at once causes some slowdown, since 
           ("" "tikz-cd" t)
           ("" "amsthm" t)
           ("" "thmtools" t)
+          ("" "mathabx" t)
           ("" "thm-restate" t)
           ("" "xpatch" t)
           ("autostyle" "csquotes" t)))
@@ -489,7 +494,7 @@ Note that trying to generate many fragments at once causes some slowdown, since 
 \\DeclareMathOperator\\proj{Proj}
 \\DeclareMathOperator\\pic{Pic}
 \\DeclareMathOperator\\supp{Supp}
-\\newcommand\\dualab\\hat
+\\newcommand\\dualab\\widehat
 \\newcommand\\sh\\mathscr
 
 \\makeatletter
@@ -537,13 +542,11 @@ Note that trying to generate many fragments at once causes some slowdown, since 
 \\documentclass[letterpaper,oneside,openany,article,english,10pt]{memoir}
 [DEFAULT-PACKAGES]
 [PACKAGES]
-\\declaretheorem[numberwithin=chapter]{theorem}  % Theorem environments using amsthm + thmtools
-\\declaretheorem[sibling=theorem]{corollary}
-\\declaretheorem[sibling=theorem]{lemma}
-\\declaretheorem[sibling=theorem]{proposition}
-\\declaretheorem[sibling=theorem]{definition}
-\\declaretheorem[sibling=theorem]{remark}
-\\declaretheorem[sibling=theorem]{conjecture}"
+\\declaretheorem[sibling=theorem, style=plain]{corollary, lemma, proposition, conjecture}
+\\declaretheorem[sibling=theorem, style=definition]{definition, example}
+\\declaretheorem[sibling=theorem, style=remark]{remark, notation}
+\\declaretheorem[numbered=no, style=remark]{acknowledgements}
+"
                    mbv/my-latex-macros)
                  ("\\chapter{%s}" . "\\chapter*{%s}")
                  ("\\section{%s}" . "\\section*{%s}")
@@ -559,13 +562,12 @@ Note that trying to generate many fragments at once causes some slowdown, since 
 \\documentclass{amsart}
 [DEFAULT-PACKAGES]
 [PACKAGES]
-\\declaretheorem[numberwithin=section]{theorem}  % Theorem environments using amsthm + thmtools
-\\declaretheorem[sibling=theorem]{corollary}
-\\declaretheorem[sibling=theorem]{lemma}
-\\declaretheorem[sibling=theorem]{proposition}
-\\declaretheorem[sibling=theorem]{definition}
-\\declaretheorem[sibling=theorem]{remark}
-\\declaretheorem[sibling=theorem]{conjecture}"
+\\declaretheorem[numberwithin=section, style=plain]{theorem}  % Theorem environments using amsthm + thmtools
+\\declaretheorem[sibling=theorem, style=plain]{corollary, lemma, proposition, conjecture}
+\\declaretheorem[sibling=theorem, style=definition]{definition, example}
+\\declaretheorem[sibling=theorem, style=remark]{remark, notation}
+\\declaretheorem[numbered=no, style=remark]{acknowledgements}
+"
                    mbv/my-latex-macros)
                  ("\\section{%s}" . "\\section*{%s}")
                  ("\\subsection{%s}" . "\\subsection*{%s}")
@@ -573,7 +575,7 @@ Note that trying to generate many fragments at once causes some slowdown, since 
                  ("\\paragraph{%s}" . "\\paragraph*{%s}")
                  ("\\subparagraph{%s}" . "\\subparagraph*{%s}")))
 
-  ;; Set my memoir class as default for export
+  ;; Set my amsart class as default for export
   (setq org-latex-default-class "mbv/my-amsart")
 
   ;; Add some bookmark-related options to the default hyperref template
@@ -588,6 +590,8 @@ Note that trying to generate many fragments at once causes some slowdown, since 
  bookmarks=true,
  bookmarksnumbered=true,
  bookmarksdepth=subsubsection}
+ \\let\\subsectionautorefname\\sectionautorefname
+ \\let\\subsubsectionautorefname\\sectionautorefname
 "))
  #+end_src
 *** org-id
