@@ -872,3 +872,21 @@ TODO: Set up HU email.
 
 (setq message-send-mail-function 'smtpmail-send-it)
 #+end_src
+
+** Terminal
+#+begin_src emacs-lisp :tangle yes
+(defun mbv/run-kitty-here ()
+  (interactive)
+  (shell-command (concat "kitty "
+            (file-name-directory (or load-file-name buffer-file-name))
+              " > /dev/null 2>&1 & disown") nil nil))
+
+(defun mbv/open-finder-here ()
+  (interactive)
+  (shell-command (concat "open "
+            (file-name-directory (or load-file-name buffer-file-name))
+              " > /dev/null 2>&1 & disown") nil nil))
+
+(map! :leader
+      :n "o C-t" #'mbv/run-kitty-here)
+#+end_src
