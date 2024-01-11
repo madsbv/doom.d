@@ -819,6 +819,15 @@ TODO: Integration with org-agenda involves switching this to pull directly from 
 (map! :after yasnippet
       "C-s" #'yas-next-field)
 #+end_src
+
+** workspaces
+
+#+begin_src emacs-lisp :tangle yes
+;; Control which workspace new frame are initialized with when opened with emacsclient.
+;; The default value +workspaces-associate-frame-fn creates a new workspace every time.
+;; With nil, it just opens in some existing workspace.
+(setq persp-emacsclient-init-frame-behaviour-override nil)
+#+end_src
 ** magit
 #+begin_src emacs-lisp :tangle yes
 ;; Making magit and yadm (utility I use for managing dotfiles) cooperate. Run (magit-status "/yadm::"). Taken from: https://github.com/TheLocehiliosan/yadm/blob/master/yadm.md
