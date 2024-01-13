@@ -876,7 +876,10 @@ Mads")
   '((:maildir "/proton/inbox"     :key  ?i)
      (:maildir "/proton/All Mail"   :key  ?a)
      (:maildir "/proton/Drafts"     :key  ?d)
-     (:maildir "/proton/Sent"      :key  ?s)))
+     (:maildir "/proton/Sent"      :key  ?s)
+     (:maildir "/proton/Folders/Math/EAGER-GEN" :key ?e)
+     (:maildir "/proton/Folders/Math/arXiv" :key ?x)
+     ))
 
 (setq mu4e-change-filenames-when-moving t ; avoid sync conflicts
       mu4e-compose-format-flowed t ; re-flow mail so it's not hard wrapped
