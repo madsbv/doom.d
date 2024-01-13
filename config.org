@@ -857,33 +857,34 @@ TODO: Set up imapnotify for syncing emails automatically. https://gitlab.com/sha
 
 TODO: Set up HU email.
 #+begin_src emacs-lisp :tangle yes
+(setq mu4e-update-interval (* 10 60)) ; check mail every 10 minutes
+
 (set-email-account! "mvilladsen@pm.me"
                     '((mu4e-sent-folder . "/proton/Sent")
                       (mu4e-drafts-folder     . "/proton/Drafts")
                       (mu4e-trash-folder      . "/proton/Trash")
-                      (mu4e-refile-folder     . "/proton/All Mail")
-                      (mu4e-compose-signature . "Best,\nMads")
+                      (mu4e-refile-folder     . "/proton/Archive")
+                      (mu4e-compose-signature . "Best,
+Mads")
                       ;; (+mu4e-personal-addresses . "mvilladsen@pm.me")
                       (smtpmail-smtp-user     . "mvilladsen@pm.me")
                       (smtpmail-smtp-server . "127.0.0.1")
                       (smtpmail-smtp-service . 1025)
                       (smtpmail-stream-type . ssl)))
 
-
-
-;; mu4e-maildir-shortcuts would be useful to set, but use the new format (see docs).
-;; Should be per-account. Does doom already do anything useful?
+(setq mu4e-maildir-shortcuts
+  '((:maildir "/proton/inbox"     :key  ?i)
+     (:maildir "/proton/All Mail"   :key  ?a)
+     (:maildir "/proton/Drafts"     :key  ?d)
+     (:maildir "/proton/Sent"      :key  ?s)))
 
 (setq mu4e-change-filenames-when-moving t ; avoid sync conflicts
-      mu4e-update-interval (* 10 60) ; check mail 10 minutes
       mu4e-compose-format-flowed t ; re-flow mail so it's not hard wrapped
       mu4e-get-mail-command "mbsync -a")
 
 
-
 (setq message-send-mail-function 'smtpmail-send-it)
 #+end_src
-
 ** Terminal
 #+begin_src emacs-lisp :tangle yes
 (defun mbv/run-kitty-here ()
