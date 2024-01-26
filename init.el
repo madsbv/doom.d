@@ -23,6 +23,8 @@
 (menu-bar-mode t)
 ;; (add-to-list 'default-frame-alist '(undecorated . t))
 
+(setenv "LSP_USE_PLISTS" "true")
+
 (doom! :input
        ;;bidi              ; (tfel ot) thgir etirw uoy gnipleh
        ;;chinese
@@ -157,7 +159,7 @@
        (javascript +tree-sitter +lsp)       ; all(hope(abandon(ye(who(enter(here))))))
        ;;julia             ; a better, faster MATLAB
        ;;kotlin            ; a better, slicker Java(Script)
-       (latex +cdlatex +fold +lsp)            ; writing papers in Emacs has never been so fun
+       (latex +cdlatex +fold +lsp +latexmk)            ; writing papers in Emacs has never been so fun
        lean                ; for folks with too much to prove
        ledger              ; be audit you can be
        ;;lua               ; one-based indices? one-based indices

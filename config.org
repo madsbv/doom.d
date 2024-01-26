@@ -5,6 +5,7 @@
 - Play with font-lock-maximum-decoration
 - Play with (setq org-highlight-latex-and-related '(latex script entities)), other combinations
 - Do some debugging/instrumentation a la https://www.emacswiki.org/emacs/FontLockSpeed
+- TODO: Figure out what extra work org does inside proof environments (and others), and why, and figure out how to disable it.
 *** tree-sitter
 #+begin_src emacs-lisp :tangle no
 ;; From https://github.com/emacs-tree-sitter/tree-sitter-langs/pull/157
@@ -307,6 +308,8 @@ Maybe define a general function to rectify pdf file name for any entry, and call
 *** PDF viewer
 #+begin_src emacs-lisp :tangle yes
 (setq! +latex-viewers '(pdf-tools))
+;; For synctex
+(setq TeX-source-correlate-start-server t)
 #+end_src
 *** cdlatex
 - cdlatex-command-alist lists keywords for tab-completion
@@ -377,25 +380,10 @@ According to https://lists.gnu.org/archive/html/emacs-orgmode/2011-10/msg00716.h
 **** Origin
      The package list and classes are originally based on [[file:project-skeletons/homework/][this template]]. In addition to what's included here, that template also loads the packages:
      - showkeys (in draft mode, shows labels where defined in output PDF)
-     - algorithm/pseudocode typesetting packages
-     - csquotes (adjust latex quote style)
      - enumitem (control list formatting more carefully; used for good theorem environments)
-     - cref (cleveref; \cref{label} automatically writes, e.g., "Lemma 17.2" instead of just 17.2 if the label refers to a lemma. Means that I can easily change the lemma to a proposition without having to check consistency manually)
      - fixme (create todo notes in latex source that block final compilation if not fixed)
-     - ntheorem
-     - epstopdf
-     - siunitx
      The original template also includes codes for:
-     - setting up siunitx properly
-     - Alternate quote styles
-     - tikz setup; loading tikz-babel and tikz-cd, and defining commands for pushout and pullback squares
-     - extensive cref setup in both Danish and English
-     - custom fixme commands
-     - extensive ntheorem setup for all kinds of theorem and proof environments; uses enumitem to provide environment-specific list types (see theoremlist.tex)
      - The command \\widebar in direct tex. The only package I know that provides this command is [[http://mirrors.rit.edu/CTAN/fonts/mathabx/mathtest.pdf][mathabx]], but that also changes many other things, and I don't know whether it's actively supported
-     - Typesetting commands for a host of categories. Most of that probably shouldn't be imported to here, instead a more flexible approach should be used except in specific cases.
-     - A multitude of custom math commands. Some of these should be imported here, others probably not; mainly a lot of the mathoperator declarations, maybe a few synonyms, should be included.
-       - Better might be to try to fit a bunch of things into cdlatex.
 
 **** Basic setup
  #+BEGIN_SRC emacs-lisp
@@ -404,12 +392,19 @@ According to https://lists.gnu.org/archive/html/emacs-orgmode/2011-10/msg00716.h
 (setq org-startup-with-latex-preview 'nil
       org-latex-prefer-user-labels t
       org-latex-reference-command "\\autoref{%s}"
-      org-latex-caption-above t)
+      org-latex-caption-above '(image table src-block special-block))
 (after! org-mode
   ;; (setq org-format-latex-options (plist-put org-format-latex-options :scale 1.0))
   (plist-put org-format-latex-options :scale 1.0))
+(add-hook 'org-mode-hook (lambda () (plist-put org-format-latex-options :scale 1.0)))
 ;; Enable org-cdlatex in every org buffer
 (add-hook 'org-mode-hook 'turn-on-org-cdlatex)
+
+;; oc-biblatex.el adds global bibliography files to exported tex documents by default. This advice undoes that.
+(advice-add 'org-cite-list-bibliography-files :around 'mbv/override-global-bibliography)
+(defun mbv/override-global-bibliography (f)
+  (let ((org-cite-global-bibliography nil))
+    (funcall f)))
 
 (defun mbv/clear-org-latex-preview-cache ()
   (interactive)
@@ -422,11 +417,6 @@ dvipng and dvisvgm do not support putting tikz code in previews. This can be don
 ;; -f forces latexmk to keep going on errors
 ;; -gg cleans all generated files before generating, in particular latexmk ALWAYS compiles the source even if nothing has changed.
 (setq org-latex-pdf-process '("latexmk -f -gg -pdf -%latex -interaction=nonstopmode -output-directory=%o %f"))
-#+end_src
-
-Tectonic holds promise, but biber integration is woefully bad, and there's errors around the \pdfoutput option, which makes this incompatible with arXiv.
-#+begin_src emacs-lisp :tangle no
-(setq org-latex-pdf-process '("tectonic -X compile --outdir=%o -Z shell-escape -Z continue-on-errors %f"))
 #+end_src
 
 #+BEGIN_SRC emacs-lisp :tangle no
@@ -473,13 +463,24 @@ Note that trying to generate many fragments at once causes some slowdown, since 
           ("" "tikz-cd" t)
           ("" "amsthm" t)
           ("" "thmtools" t)
-          ("" "mathabx" t)
           ("" "thm-restate" t)
           ("" "xpatch" t)
           ("autostyle" "csquotes" t)))
 
   (setq mbv/my-latex-macros
         "
+% Biblatex setup
+\\usepackage[backend=biber,style=alphabetic,giveninits=true,url=true,eprint=true,doi=false,isbn=false]{biblatex}
+% Suppress 'In: JournalTitle' and just write 'JournalTitle' instead for journal articles.
+% From: https://tex.stackexchange.com/questions/10682/suppress-in-biblatex
+\\renewbibmacro{in:}{%
+  \\ifentrytype{article}{}{\\printtext{\\bibstring{in}\\intitlepunct}}}
+
+% All tikzcd cells are in displaystyle by default
+\\tikzcdset{
+  cells={font=\\everymath\\expandafter{\\the\\everymath\\displaystyle}},
+}
+
 \\DeclareMathOperator\\id{id}
 \\DeclareMathOperator\\coker{coker}
 \\DeclareMathOperator\\im{im}
@@ -508,6 +509,77 @@ Note that trying to generate many fragments at once causes some slowdown, since 
   \\stepcounter{proofstep}%
   \\noindent\\emph{Step \\theproofstep: #1}\\par\\nobreak\\smallskip
   \\@afterheading
+}
+\\makeatother
+
+% Define \\widebar
+\\makeatletter
+\\let\\save@mathaccent\\mathaccent
+\\newcommand*\\if@single[3]{%
+  \\setbox0\\hbox{${\\mathaccent\"0362{#1}}^H$}%
+        \\setbox2\\hbox{${\\mathaccent\"0362{\\kern0pt#1}}^H$}%
+  \\ifdim\\ht0=\\ht2 #3\\else #2\\fi
+  }
+%The bar will be moved to the right by a half of \\macc@kerna, which is computed by amsmath:
+\\newcommand*\\rel@kern[1]{\\kern#1\\dimexpr\\macc@kerna}
+%If there's a superscript following the bar, then no negative kern may follow the bar;
+%an additional {} makes sure that the superscript is high enough in this case:
+\\newcommand*\\widebar[1]{\\@ifnextchar^{{\\wide@bar{#1}{0}}}{\\wide@bar{#1}{1}}}
+%Use a separate algorithm for single symbols:
+\\newcommand*\\wide@bar[2]{\\if@single{#1}{\\wide@bar@{#1}{#2}{1}}{\\wide@bar@{#1}{#2}{2}}}
+\\newcommand*\\wide@bar@[3]{%
+  \\begingroup
+  \\def\\mathaccent##1##2{%
+%Enable nesting of accents:
+    \\let\\mathaccent\\save@mathaccent
+%If there's more than a single symbol, use the first character instead (see below):
+    \\if#32 \\let\\macc@nucleus\\first@char \\fi
+%Determine the italic correction:
+    \\setbox\\z@\\hbox{$\\macc@style{\\macc@nucleus}_{}$}%
+    \\setbox\\tw@\\hbox{$\\macc@style{\\macc@nucleus}{}_{}$}%
+    \\dimen@\\wd\\tw@
+    \\advance\\dimen@-\\wd\\z@
+%Now \\dimen@ is the italic correction of the symbol.
+    \\divide\\dimen@ 3
+    \\@tempdima\\wd\\tw@
+    \\advance\\@tempdima-\\scriptspace
+%Now \\@tempdima is the width of the symbol.
+    \\divide\\@tempdima 10
+    \\advance\\dimen@-\\@tempdima
+%Now \\dimen@ = (italic correction / 3) - (Breite / 10)
+    \\ifdim\\dimen@>\\z@ \\dimen@0pt\\fi
+%The bar will be shortened in the case \\dimen@<0 !
+    \\rel@kern{0.6}\\kern-\\dimen@
+    \\if#31
+      \\overline{\\rel@kern{-0.6}\\kern\\dimen@\\macc@nucleus\\rel@kern{0.4}\\kern\\dimen@}%
+      \\advance\\dimen@0.4\\dimexpr\\macc@kerna
+%Place the combined final kern (-\\dimen@) if it is >0 or if a superscript follows:
+      \\let\\final@kern#2%
+      \\ifdim\\dimen@<\\z@ \\let\\final@kern1\\fi
+      \\if\\final@kern1 \\kern-\\dimen@\\fi
+    \\else
+      \\overline{\\rel@kern{-0.6}\\kern\\dimen@#1}%
+    \\fi
+  }%
+  \\macc@depth\\@ne
+  \\let\\math@bgroup\\@empty \\let\\math@egroup\\macc@set@skewchar
+  \\mathsurround\\z@ \\frozen@everymath{\\mathgroup\\macc@group\\relax}%
+  \\macc@set@skewchar\\relax
+  \\let\\mathaccentV\\macc@nested@a
+%The following initialises \\macc@kerna and calls \\mathaccent:
+  \\if#31
+    \\macc@nested@a\\relax111{#1}%
+  \\else
+%If the argument consists of more than one symbol, and if the first token is
+%a letter, use that letter for the computations:
+    \\def\\gobble@till@marker##1\\endmarker{}%
+    \\futurelet\\first@char\\gobble@till@marker#1\\endmarker
+    \\ifcat\\noexpand\\first@char A\\else
+      \\def\\first@char{}%
+    \\fi
+    \\macc@nested@a\\relax111{\\first@char}%
+  \\fi
+  \\endgroup
 }
 \\makeatother")
 
@@ -596,6 +668,23 @@ Note that trying to generate many fragments at once causes some slowdown, since 
  \\let\\subsubsectionautorefname\\sectionautorefname
 "))
  #+end_src
+
+ #+RESULTS:
+ #+begin_example
+ \hypersetup{
+  pdfauthor={%a},
+  pdftitle={%t},
+  pdfkeywords={%k},
+  pdfsubject={%d},
+  pdflang={%L},
+  final,
+  bookmarks=true,
+  bookmarksnumbered=true,
+  bookmarksdepth=subsubsection}
+  \let\subsectionautorefname\sectionautorefname
+  \let\subsubsectionautorefname\sectionautorefname
+ #+end_example
+
 *** org-id
     :PROPERTIES:
     :ID:       e63541f2-d373-42cb-ace7-d69e8ba7afe1
@@ -873,17 +962,33 @@ Mads")
                       (smtpmail-stream-type . ssl)))
 
 (setq mu4e-maildir-shortcuts
-  '((:maildir "/proton/inbox"     :key  ?i)
-     (:maildir "/proton/All Mail"   :key  ?a)
-     (:maildir "/proton/Drafts"     :key  ?d)
-     (:maildir "/proton/Sent"      :key  ?s)
-     (:maildir "/proton/Folders/Math/EAGER-GEN" :key ?e)
-     (:maildir "/proton/Folders/Math/arXiv" :key ?x)
-     ))
+  '(
+    (:maildir "/proton/inbox"     :key  ?i)
+    (:maildir "/proton/Archive"   :key  ?a)
+    (:maildir "/proton/Drafts"     :key  ?d)
+    (:maildir "/proton/Sent"      :key  ?s)
+    (:maildir "/proton/Folders/Math/EAGER-GEN" :key ?e)
+    (:maildir "/proton/Folders/Math/arXiv" :key ?x)
+    ))
+
+(setq mu4e-bookmarks
+      '(
+        (:name "Unread messages" :query "flag:unread and not flag:trashed and not maildir:'/All Mail/'" :key ?u)
+        (:name "Today's messages" :query "date:today..now" :key ?t)
+        (:name "Last 7 days" :query "date:7d..now" :hide-unread nil :key ?w)
+        (:name "Flagged messages" :query "flag:flagged" :key ?f)
+        (:name "Messages with documents" :query "mime:application/pdf" :hide-unread t :key ?d)
+        (:name "Messages with images" :query "mime:image/*" :hide-unread t :key ?p)
+        ))
+
+;; The mu search query used to count the number of 'interesting' mail to show in the mode line.
+(setq mu4e-alert-interesting-mail-query "flag:unread and not flag:trashed and not maildir:/arXiv/ and not maildir:'/All Mail/' and not maildir:/EAGER-GEN/")
+(mu4e-alert-set-default-style #'osx-notifier)
 
 (setq mu4e-change-filenames-when-moving t ; avoid sync conflicts
       mu4e-compose-format-flowed t ; re-flow mail so it's not hard wrapped
-      mu4e-get-mail-command "mbsync -a")
+      mu4e-get-mail-command "mbsync -a"
+      mu4e-search-results-limit 500) ; The default is 500, we set it explicitly for possible later reference. Note that mu4e-search-toggle-property can be called to set full search to on, which then shows all results.
 
 
 (setq message-send-mail-function 'smtpmail-send-it)
