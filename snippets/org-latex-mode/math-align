@@ -1,0 +1,8 @@
+# -*- mode: snippet -*-
+# name: math-align
+# key: ma
+# --
+`()`
+\\begin{align*}
+$0
+\\end{align*}

@@ -1,0 +1,9 @@
+# -*- mode: snippet -*-
+# name: math-display
+# key: md
+# expand-env: ((yas-also-indent-empty-lines t) (yas-also-auto-indent-first-line t))
+# --
+`()`
+\\[
+$0
+\\]
