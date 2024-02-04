@@ -256,7 +256,8 @@ Evil-lion seems like a useful tool to learn, but current bindings also conflict 
 #+end_src
 ** vertico
 #+begin_src emacs-lisp :tangle yes
-(setq! consult-locate-args "locate -i")
+(setq! consult-locate-args "locate -i"
+       vertico-posframe-poshandler 'posframe-poshandler-frame-top-center)
 #+end_src
 ** word-wrap
 #+begin_src emacs-lisp
