@@ -234,12 +234,12 @@ Evil-lion seems like a useful tool to learn, but current bindings also conflict 
 (defun paste-from-clipboard ()
   (interactive)
   (setq x-select-enable-clipboard t)
-  (yank)
+  (call-interactively #'evil-paste-after)
   (setq x-select-enable-clipboard nil))
 (defun copy-to-clipboard()
   (interactive)
   (setq x-select-enable-clipboard t)
-  (kill-ring-save (region-beginning) (region-end))
+  (call-interactively #'evil-yank)
   (setq x-select-enable-clipboard nil))
 #+end_src
 ** company
