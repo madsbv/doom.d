@@ -92,8 +92,10 @@ Evil-lion seems like a useful tool to learn, but current bindings also conflict 
 (package! org-ref)
 (package! org-fragtog)
 (package! sage-shell-mode)
+;; Use existing pdf-tools if available, otherwise install.
+;; Needed to make pdf-tools from nixpkgs work.
+(package! pdf-tools :built-in 'prefer)
 #+end_src
-
 * Original doom config.el
 #+begin_src emacs-lisp :tangle yes
 ;;; $DOOMDIR/config.el -*- lexical-binding: t; -*-
@@ -994,19 +996,18 @@ Mads")
 
 (setq message-send-mail-function 'smtpmail-send-it)
 #+end_src
-** Terminal
+** Convenience functions
+Note: I previously had a 'mbv/open-finder-here', but Doom actually provides that natively with '<leader> o o'.
 #+begin_src emacs-lisp :tangle yes
 (defun mbv/run-kitty-here ()
   (interactive)
-  (shell-command (concat "kitty "
+  (shell-command (concat "kitty --single-instance "
             (file-name-directory (or load-file-name buffer-file-name))
               " > /dev/null 2>&1 & disown") nil nil))
 
-(defun mbv/open-finder-here ()
+(defun mbv/open-externally ()
   (interactive)
-  (shell-command (concat "open "
-            (file-name-directory (or load-file-name buffer-file-name))
-              " > /dev/null 2>&1 & disown") nil nil))
+  (shell-command (concat "open " buffer-file-name " > /dev/null 2>&1 & disown") nil nil))
 
 (map! :leader
       :n "o C-t" #'mbv/run-kitty-here)
