@@ -997,6 +997,10 @@ Mads")
 
 (setq message-send-mail-function 'smtpmail-send-it)
 #+end_src
+** csv-mode
+#+begin_src emacs-lisp :tangle yes
+(add-hook! csv-mode :append '(csv-align-mode csv-header-line))
+#+end_src
 ** Convenience functions
 Note: I previously had a 'mbv/open-finder-here', but Doom actually provides that natively with '<leader> o o'.
 #+begin_src emacs-lisp :tangle yes
