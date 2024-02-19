@@ -135,7 +135,7 @@
        ;;coq               ; proofs-as-programs
        ;;crystal           ; ruby at the speed of c
        ;;csharp            ; unity, .NET, and mono shenanigans
-       ;;data              ; config/data formats
+       data              ; config/data formats
        ;;(dart +flutter)   ; paint ui and not much else
        ;;dhall
        ;;elixir            ; erlang done right
@@ -161,7 +161,7 @@
        ;;kotlin            ; a better, slicker Java(Script)
        (latex +cdlatex +fold +lsp +latexmk)            ; writing papers in Emacs has never been so fun
        lean                ; for folks with too much to prove
-       ledger              ; be audit you can be
+       ;;ledger              ; be audit you can be
        ;;lua               ; one-based indices? one-based indices
        markdown            ; writing docs for people to ignore
        ;;nim               ; python + lisp at the speed of c

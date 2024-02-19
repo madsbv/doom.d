@@ -92,7 +92,6 @@ Evil-lion seems like a useful tool to learn, but current bindings also conflict 
 (package! org-ref)
 (package! org-fragtog)
 (package! sage-shell-mode)
-(package! csv-mode)
 ;; Use existing pdf-tools if available, otherwise install.
 ;; Needed to make pdf-tools from nixpkgs work.
 (package! pdf-tools :built-in 'prefer)
