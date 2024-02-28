@@ -95,6 +95,7 @@ Evil-lion seems like a useful tool to learn, but current bindings also conflict 
 ;; Use existing pdf-tools if available, otherwise install.
 ;; Needed to make pdf-tools from nixpkgs work.
 (package! pdf-tools :built-in 'prefer)
+(package! evil-matchit)
 #+end_src
 * Original doom config.el
 #+begin_src emacs-lisp :tangle yes
@@ -243,6 +244,10 @@ Evil-lion seems like a useful tool to learn, but current bindings also conflict 
   (setq x-select-enable-clipboard t)
   (call-interactively #'evil-yank)
   (setq x-select-enable-clipboard nil))
+#+end_src
+*** evil-matchit
+#+begin_src emacs-lisp :tangle yes
+(global-evil-matchit-mode 1)
 #+end_src
 ** company
 #+begin_src emacs-lisp :tangle yes
