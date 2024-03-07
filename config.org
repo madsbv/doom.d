@@ -960,8 +960,9 @@ TODO: Integration with org-agenda involves switching this to pull directly from 
 :ID:       c1fe9cd6-47ff-4ba9-b115-ce09e69fbc09
 :END:
 #+begin_src emacs-lisp :tangle yes
-(after! pdf-view-mode
-  (setq! pdf-view-resize-factor 1.1))
+  (setq! pdf-view-resize-factor 1.1
+        pdf-view-continuous nil
+        pdf-view-display-size 'fit-page)
 (map! :mode pdf-view-mode
       :nv "`" #'pdf-view-jump-to-register)
 #+end_src
