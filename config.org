@@ -1126,3 +1126,11 @@ Note: I previously had a 'mbv/open-finder-here', but Doom actually provides that
 (map! :leader
       :n "o C-t" #'mbv/run-kitty-here)
 #+end_src
+
+** Performance
+Based on https://github.com/brotzeit/rustic/issues/312#issuecomment-1113738865, while high gcmh-idle-delay can prevent gc from running while active, it can also cause memory pressure to accumulate enough that in cases where gc runs while active, it's worse than otherwise.
+
+Note: By default in Doom, this is set to auto. We could also play with the parameters of that.
+#+begin_src emacs-lisp :tangle yes
+(setq! gcmh-idle-delay 1)
+#+end_src
