@@ -32,6 +32,9 @@
 Evil-lion seems like a useful tool to learn, but current bindings also conflict with org-mode. Do some rebinding.
 * Package installation
 ** Original doom package.el
+:PROPERTIES:
+:ID:       f7010a9c-48b0-491c-a0ab-91ea6cfd8490
+:END:
 #+begin_src emacs-lisp :tangle packages.el
 ;; -*- no-byte-compile: t; -*-
 ;;; $DOOMDIR/packages.el
@@ -86,6 +89,9 @@ Evil-lion seems like a useful tool to learn, but current bindings also conflict 
 
 #+end_src
 ** Personal package installation
+:PROPERTIES:
+:ID:       5d78469c-8157-4f3f-b49e-e3e1046eff6f
+:END:
 #+begin_src emacs-lisp :tangle packages.el
 (package! org-roam-bibtex)
 (package! org-roam-server)
@@ -98,6 +104,9 @@ Evil-lion seems like a useful tool to learn, but current bindings also conflict 
 (package! evil-matchit)
 #+end_src
 * Original doom config.el
+:PROPERTIES:
+:ID:       80ba8b16-1d1e-4282-8a31-e32819a02084
+:END:
 #+begin_src emacs-lisp :tangle yes
 ;;; $DOOMDIR/config.el -*- lexical-binding: t; -*-
 
@@ -173,6 +182,9 @@ Evil-lion seems like a useful tool to learn, but current bindings also conflict 
 
 #+end_src
 * File location variables
+:PROPERTIES:
+:ID:       a4c70931-80dd-4ee9-8818-8f307ceeddbe
+:END:
 #+begin_src emacs-lisp :tangle yes
 (setq! mbv/my-personal-directory "~/Dropbox/docs/"
        mbv/my-org-directory (concat mbv/my-personal-directory "org/")
@@ -210,17 +222,26 @@ Evil-lion seems like a useful tool to learn, but current bindings also conflict 
   (setq history-length 1000)
 #+end_src
 * Emacs server
+:PROPERTIES:
+:ID:       4606322c-471e-4579-9ac4-2ce63506e971
+:END:
 #+begin_src emacs-lisp :tangle yes
 (server-start)
 #+end_src
 * Packages and Doom module config
 ** doom
+:PROPERTIES:
+:ID:       5d289674-46be-4681-8772-37561467d5b8
+:END:
 #+begin_src emacs-lisp :tangle yes
 (setq! doom-molokai-brighter-comments t)
 (setq! doom-molokai-brighter-modeline t)
 (setq! doom-theme 'doom-molokai)
 #+end_src
 ** evil
+:PROPERTIES:
+:ID:       12e4d4eb-378b-46e9-9d97-c4af4d7f39ae
+:END:
 #+begin_src emacs-lisp :tangle yes
 (setq! evil-cross-lines t
        evil-snipe-scope 'buffer
@@ -246,10 +267,16 @@ Evil-lion seems like a useful tool to learn, but current bindings also conflict 
   (setq x-select-enable-clipboard nil))
 #+end_src
 *** evil-matchit
+:PROPERTIES:
+:ID:       9c76ed39-ee3e-4e89-8713-ce3b77dc66dd
+:END:
 #+begin_src emacs-lisp :tangle yes
 (global-evil-matchit-mode 1)
 #+end_src
 ** company
+:PROPERTIES:
+:ID:       248fc78a-f917-4379-b852-a3dba2574724
+:END:
 #+begin_src emacs-lisp :tangle yes
 (map! :after company
       :map company-active-map
@@ -262,6 +289,9 @@ Evil-lion seems like a useful tool to learn, but current bindings also conflict 
      "C-<return>" #'company-complete-selection)
 #+end_src
 ** vertico
+:PROPERTIES:
+:ID:       e2d44da6-e2c8-441c-a741-72e191b8bd6f
+:END:
 #+begin_src emacs-lisp :tangle yes
 (setq! consult-locate-args "locate -i"
        vertico-posframe-poshandler 'posframe-poshandler-frame-top-center
@@ -275,6 +305,9 @@ Evil-lion seems like a useful tool to learn, but current bindings also conflict 
 (+global-word-wrap-mode +1)
 #+end_src
 ** TODO biblio
+:PROPERTIES:
+:ID:       72045c34-0fe5-4ac3-8586-753211054673
+:END:
 Modify 'arxiv-get-pdf-add-bibtex-entry' to use different file name from bibtex key (add title to pdf file name).
 Maybe define a general function to rectify pdf file name for any entry, and call it after arxiv-get-pdf-add-bibtex-entry?
 #+begin_src emacs-lisp :tangle yes
@@ -293,19 +326,24 @@ Maybe define a general function to rectify pdf file name for any entry, and call
          bibtex-autokey-name-year-separator ""
          bibtex-autokey-name-case-convert-function 'upcase-initials)
   (citar-org-roam-mode))
-(map! :after citar
-      :leader
+(map! :leader
       :prefix "r"
       "o" #'citar-open
       "i" #'citar-insert-citation)
 #+end_src
 *** org-noter
+:PROPERTIES:
+:ID:       1a703448-20ea-48e7-8e38-3adba05dd374
+:END:
 #+begin_src emacs-lisp :tangle yes
 (after! org-mode
   (setq! org-noter-hide-other nil
          org-noter-notes-search-path mbv/my-paper-notes-directory))
 #+end_src
 ** ledger
+:PROPERTIES:
+:ID:       fd2d4160-2733-4f26-bd40-3ce1f6202325
+:END:
 #+begin_src emacs-lisp :tangle yes
 (after! ledger-mode
   (setq! ledger-complete-in-steps t
@@ -313,16 +351,25 @@ Maybe define a general function to rectify pdf file name for any entry, and call
 #+end_src
 ** latex
 *** RefTeX
+:PROPERTIES:
+:ID:       2e9cb8fe-74ad-4581-877d-60782eed5760
+:END:
 #+begin_src emacs-lisp :tangle yes
 (setq! reftex-default-bibliography mbv/my-main-bib-file)
 #+end_src
 *** PDF viewer
+:PROPERTIES:
+:ID:       8d7e8cc1-648f-46c0-9337-fd129c854a97
+:END:
 #+begin_src emacs-lisp :tangle yes
 (setq! +latex-viewers '(pdf-tools))
 ;; For synctex
 (setq TeX-source-correlate-start-server t)
 #+end_src
 *** cdlatex
+:PROPERTIES:
+:ID:       c1c78b2d-e66e-4953-99b2-232cc8ad691f
+:END:
 - cdlatex-command-alist lists keywords for tab-completion
 
 Note that the cdlatex variables have to be given a characters ASCII code, ? converts a character to its code (you might have to escape some chars with \). The elisp function string-to-char does the same (for the first char in a string), print and insert takes an ASCII code and either prints the corresponding char in the minibuffer, or inserts the char in the buffer.
@@ -364,6 +411,9 @@ According to https://lists.gnu.org/archive/html/emacs-orgmode/2011-10/msg00716.h
 #+end_src
 
 ** org
+:PROPERTIES:
+:ID:       b0fafc69-1a25-468b-bd79-83067b889d39
+:END:
 #+begin_src emacs-lisp           :tangle yes
 (setq! org-directory mbv/my-org-directory)
 (after! org
@@ -422,6 +472,9 @@ According to https://lists.gnu.org/archive/html/emacs-orgmode/2011-10/msg00716.h
   (dired-delete-file org-preview-latex-image-directory 'always t))
  #+END_SRC
 **** PROJ Org-TeX compilation tools
+:PROPERTIES:
+:ID:       97aeb11e-0de9-4305-bb65-ba18fdee4330
+:END:
 dvipng and dvisvgm do not support putting tikz code in previews. This can be done with imagemagick, but that's prone to bugs, especially around imagemagick updates.
 
 #+begin_src emacs-lisp :tangle yes
@@ -721,6 +774,9 @@ Sets up org-id for consistent links that allow changing headlines/file locations
 #+END_SRC
 
 *** org-roam
+:PROPERTIES:
+:ID:       ab27712b-6660-4129-a423-017b1204243a
+:END:
 #+begin_src emacs-lisp :tangle yes
 (after! org-roam-mode
   (setq! org-roam-directory mbv/my-org-roam-directory
@@ -730,6 +786,9 @@ Sets up org-id for consistent links that allow changing headlines/file locations
   (require 'org-roam-protocol))
 #+end_src
 **** TODO org-roam-bibtex
+:PROPERTIES:
+:ID:       6e2498f5-cdb8-4aa6-8a9f-1507cc4d91c1
+:END:
 #+begin_src emacs-lisp :tangle yes
 (add-hook! org-roam-mode (org-roam-bibtex-mode))
 #+end_src
@@ -765,6 +824,9 @@ TODO: Make this actually work well.
 
 #+end_src
 **** org-roam-server
+:PROPERTIES:
+:ID:       b6c36a3c-d646-44d5-abd0-7fa7fbf620ec
+:END:
 #+begin_src emacs-lisp :tangle yes
 (after! org-roam-server-mode
   (setq! org-roam-server-host "127.0.0.1"
@@ -780,6 +842,9 @@ TODO: Make this actually work well.
          org-roam-server-network-label-wrap-length 20))
 #+end_src
 *** org-ref
+:PROPERTIES:
+:ID:       b5e82625-5a07-49c3-bee4-6dba80416507
+:END:
 This is only used to get access to functions used to transition away from org-ref to org-cite.
 That said, the hydra provided by org-ref is quite nice...
 TODO: Figure out how to manage bib files directly in emacs; org-ref may be part of that.
@@ -829,6 +894,9 @@ TODO: Rewrite this to use type citation instead of citation-reference. Then we d
         (substring cite-string 0 -1)))))
 #+end_src
 *** [?] org-noter
+:PROPERTIES:
+:ID:       9fa1c0ab-1397-4f9e-9025-a240a5a010a7
+:END:
 I really want org-noter-insert-note bound to "i", but I don't know how to do that.
 TODO: Make the insert functions also enter insert-mode in the org buffer.
 #+begin_src emacs-lisp :tangle yes
@@ -837,11 +905,17 @@ TODO: Make the insert functions also enter insert-mode in the org buffer.
       "C-M-i" #'org-noter-insert-precise-note)
 #+end_src
 *** org-fragtog
+:PROPERTIES:
+:ID:       b436aa20-85bb-464a-bb78-00559f4fff16
+:END:
 #+begin_src emacs-lisp :tangle yes
 (add-hook 'org-mode-hook 'org-fragtog-mode)
 #+end_src
 ** calendar
 *** TODO org-gcal
+:PROPERTIES:
+:ID:       9c067ce1-25ee-4f3b-8e85-5389d4727a01
+:END:
 TODO: Actually integrate with Org and start using.
 - https://200ok.ch/posts/2022-02-13_integrating_org_mode_agenda_into_other_calendar_apps.html
 - https://github.com/kidd/org-gcal.el
@@ -868,6 +942,9 @@ Homebrew GPG patching instructions:
 
 #+end_src
 *** TODO calfw
+:PROPERTIES:
+:ID:       69463595-2c50-4fc0-b616-810413f9d7ed
+:END:
 TODO: Integration with org-agenda involves switching this to pull directly from agenda with cfw:org-create-source instead.
 #+begin_src emacs-lisp :tangle yes
 (defun mbv/open-calendar ()
@@ -879,6 +956,9 @@ TODO: Integration with org-agenda involves switching this to pull directly from 
     (cfw:org-create-file-source "madsbv96" (concat org-directory "calendar-madsbv96.org") "Red"))))
 #+end_src
 ** pdf-view
+:PROPERTIES:
+:ID:       c1fe9cd6-47ff-4ba9-b115-ce09e69fbc09
+:END:
 #+begin_src emacs-lisp :tangle yes
 (after! pdf-view-mode
   (setq! pdf-view-resize-factor 1.1))
@@ -886,6 +966,9 @@ TODO: Integration with org-agenda involves switching this to pull directly from 
       :nv "`" #'pdf-view-jump-to-register)
 #+end_src
 ** deft
+:PROPERTIES:
+:ID:       599f0c3f-3533-4e09-9c25-8615d045ef4f
+:END:
 #+begin_src emacs-lisp :tangle yes
 (after! deft
   (setq! deft-recursive t
@@ -912,6 +995,9 @@ TODO: Integration with org-agenda involves switching this to pull directly from 
 		  "\\)")))
 #+end_src
 ** snippet
+:PROPERTIES:
+:ID:       522dd2b3-4c09-4ef8-81df-ce520e8959f2
+:END:
 #+begin_src emacs-lisp :tangle yes
 ;; Nested snippets
 (after! yasnippet
@@ -921,6 +1007,9 @@ TODO: Integration with org-agenda involves switching this to pull directly from 
 #+end_src
 
 ** workspaces
+:PROPERTIES:
+:ID:       91d88b8d-c942-4037-8411-6de47f2de9df
+:END:
 
 #+begin_src emacs-lisp :tangle yes
 ;; Control which workspace new frame are initialized with when opened with emacsclient.
@@ -929,6 +1018,9 @@ TODO: Integration with org-agenda involves switching this to pull directly from 
 (setq persp-emacsclient-init-frame-behaviour-override nil)
 #+end_src
 ** magit
+:PROPERTIES:
+:ID:       5483b3ab-c12d-4e62-b4c2-6a2a644ba420
+:END:
 #+begin_src emacs-lisp :tangle yes
 ;; Making magit and yadm (utility I use for managing dotfiles) cooperate. Run (magit-status "/yadm::"). Taken from: https://github.com/TheLocehiliosan/yadm/blob/master/yadm.md
 (after! magit
@@ -947,6 +1039,9 @@ TODO: Integration with org-agenda involves switching this to pull directly from 
 #+end_src
 
 ** mu4e
+:PROPERTIES:
+:ID:       caded08a-c2a1-4133-a6cd-7d9f613db211
+:END:
 GMail is hostile to clients, and setting up mbsync with its OAuth2 requirements is terrible. It is possible with some extra scripting: https://github.com/MarcvdSluys/SundryNotes/blob/master/mbsync-with-gmail-oauth2.org
 I don't want to use that method due to fragility and probable maintenance cost. Switching to Proton is probably better all around.
 
@@ -1005,10 +1100,16 @@ Mads")
 (setq message-send-mail-function 'smtpmail-send-it)
 #+end_src
 ** csv-mode
+:PROPERTIES:
+:ID:       91df0cdb-0c1c-4922-8af3-a104bcedb13a
+:END:
 #+begin_src emacs-lisp :tangle yes
 (add-hook! csv-mode :append '(csv-align-mode csv-header-line))
 #+end_src
 ** Convenience functions
+:PROPERTIES:
+:ID:       e5879a87-628a-4e45-bc64-1e0cec4e1410
+:END:
 Note: I previously had a 'mbv/open-finder-here', but Doom actually provides that natively with '<leader> o o'.
 #+begin_src emacs-lisp :tangle yes
 (defun mbv/run-kitty-here ()
