@@ -287,6 +287,7 @@ Evil-lion seems like a useful tool to learn, but current bindings also conflict 
      "RET" nil
      "<return>" nil
      "C-<return>" #'company-complete-selection)
+(setq! company-idle-delay 0.4)
 #+end_src
 ** vertico
 :PROPERTIES:
@@ -1100,6 +1101,25 @@ Mads")
 
 (setq message-send-mail-function 'smtpmail-send-it)
 #+end_src
+** rust
+TODO: adaptive-wrap-prefix-mode causes issues with rustic-mode, add hook to disable
+Might also want to disable smartparens-mode
+#+begin_src emacs-lisp :tangle yes
+(setq! lsp-rust-analyzer-cargo-watch-command "clippy"
+       lsp-inlay-hints-mode t
+       lsp-rust-analyzer-display-lifetime-elision-hints-enable "skip_trivial"
+       lsp-rust-analyzer-display-chaining-hints t
+       lsp-rust-analyzer-display-lifetime-elision-hints-use-parameter-names nil
+       lsp-rust-analyzer-display-closure-return-type-hints t
+       lsp-rust-analyzer-display-parameter-hints nil
+       lsp-rust-analyzer-display-reborrow-hints nil
+       lsp-ui-peek-always-show t
+       lsp-ui-sideline-show-hover t
+       lsp-ui-doc-enable nil)
+
+(add-hook! rustic-mode #'turn-off-smartparens-mode)
+(appendq! +word-wrap-visual-modes '(rustic-mode))
+#+end_src
 ** csv-mode
 :PROPERTIES:
 :ID:       91df0cdb-0c1c-4922-8af3-a104bcedb13a
@@ -1132,5 +1152,11 @@ Based on https://github.com/brotzeit/rustic/issues/312#issuecomment-1113738865, 
 
 Note: By default in Doom, this is set to auto. We could also play with the parameters of that.
 #+begin_src emacs-lisp :tangle yes
-(setq! gcmh-idle-delay 1)
+(setq! gcmh-idle-delay 1
+       gcmh-low-cons-threshold 800000           ;; Default value 800000
+       gcmh-high-cons-threshold 100000000)         ;; Default value 33554432
+
+;; From https://www.reddit.com/r/emacs/comments/14c4l8j/way_to_make_emacs_feel_smoother/
+(setq! jit-lock-stealth-time 1.25)
+(setq! jit-lock-chunk-size 2048)
 #+end_src

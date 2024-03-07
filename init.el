@@ -59,8 +59,8 @@
        ;;tabs              ; a tab bar for Emacs
        (treemacs +lsp)          ; a project drawer, like neotree but cooler
        unicode             ; extended unicode support for various languages
-       (vc-gutter +pretty) ; vcs diff in the fringe
-       vi-tilde-fringe     ; fringe tildes to mark beyond EOB
+       (vc-gutter +pretty +diff-hl) ; vcs diff in the fringe
+       ;; vi-tilde-fringe     ; fringe tildes to mark beyond EOB
        window-select       ; visually switch windows
        workspaces          ; tab emulation, persistence & separate workspaces
        zen                 ; distraction-free coding or writing
@@ -167,7 +167,7 @@
        ;;nim               ; python + lisp at the speed of c
        (nix +lsp +tree-sitter) ; I hereby declare "nix geht mehr!"
        ;;ocaml             ; an objective camel
-       (org +dragndrop +noter +pretty +roam2)               ; organize your plain life in plain text
+       (org +dragndrop +noter +roam2)               ; organize your plain life in plain text
        ;;php               ; perl's insecure younger brother
        ;;plantuml          ; diagrams for confusing people more
        ;;purescript        ; javascript, but functional
