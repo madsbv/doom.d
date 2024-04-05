@@ -31,64 +31,6 @@
 ** TODO evil-lion
 Evil-lion seems like a useful tool to learn, but current bindings also conflict with org-mode. Do some rebinding.
 * Package installation
-** Original doom package.el
-:PROPERTIES:
-:ID:       f7010a9c-48b0-491c-a0ab-91ea6cfd8490
-:END:
-#+begin_src emacs-lisp :tangle packages.el
-;; -*- no-byte-compile: t; -*-
-;;; $DOOMDIR/packages.el
-
-;; To install a package with Doom you must declare them here and run 'doom sync'
-;; on the command line, then restart Emacs for the changes to take effect -- or
-;; use 'M-x doom/reload'.
-
-
-;; To install SOME-PACKAGE from MELPA, ELPA or emacsmirror:
-                                        ;(package! some-package)
-
-;; To install a package directly from a remote git repo, you must specify a
-;; `:recipe'. You'll find documentation on what `:recipe' accepts here:
-;; https://github.com/radian-software/straight.el#the-recipe-format
-                                        ;(package! another-package
-                                        ;  :recipe (:host github :repo "username/repo"))
-
-;; If the package you are trying to install does not contain a PACKAGENAME.el
-;; file, or is located in a subdirectory of the repo, you'll need to specify
-;; `:files' in the `:recipe':
-                                        ;(package! this-package
-                                        ;  :recipe (:host github :repo "username/repo"
-                                        ;           :files ("some-file.el" "src/lisp/*.el")))
-
-;; If you'd like to disable a package included with Doom, you can do so here
-;; with the `:disable' property:
-                                        ;(package! builtin-package :disable t)
-
-;; You can override the recipe of a built in package without having to specify
-;; all the properties for `:recipe'. These will inherit the rest of its recipe
-;; from Doom or MELPA/ELPA/Emacsmirror:
-                                        ;(package! builtin-package :recipe (:nonrecursive t))
-                                        ;(package! builtin-package-2 :recipe (:repo "myfork/package"))
-
-;; Specify a `:branch' to install a package from a particular branch or tag.
-;; This is required for some packages whose default branch isn't 'master' (which
-;; our package manager can't deal with; see radian-software/straight.el#279)
-                                        ;(package! builtin-package :recipe (:branch "develop"))
-
-;; Use `:pin' to specify a particular commit to install.
-                                        ;(package! builtin-package :pin "1a2b3c4d5e")
-
-
-;; Doom's packages are pinned to a specific commit and updated from release to
-;; release. The `unpin!' macro allows you to unpin single packages...
-                                        ;(unpin! pinned-package)
-;; ...or multiple packages
-                                        ;(unpin! pinned-package another-pinned-package)
-;; ...Or *all* packages (NOT RECOMMENDED; will likely break things)
-                                        ;(unpin! t)
-
-#+end_src
-** Personal package installation
 :PROPERTIES:
 :ID:       5d78469c-8157-4f3f-b49e-e3e1046eff6f
 :END:
@@ -97,6 +39,7 @@ Evil-lion seems like a useful tool to learn, but current bindings also conflict 
 (package! org-roam-server)
 (package! org-ref)
 (package! org-fragtog)
+(package! org-gtd)
 (package! sage-shell-mode)
 ;; Use existing pdf-tools if available, otherwise install.
 ;; Needed to make pdf-tools from nixpkgs work.
@@ -104,89 +47,15 @@ Evil-lion seems like a useful tool to learn, but current bindings also conflict 
 (package! evil-matchit)
 (package! just-mode)
 #+end_src
-* Original doom config.el
+* Config
+** Emacs
+*** Personal variables
 :PROPERTIES:
 :ID:       80ba8b16-1d1e-4282-8a31-e32819a02084
 :END:
 #+begin_src emacs-lisp :tangle yes
-;;; $DOOMDIR/config.el -*- lexical-binding: t; -*-
-
-;; Place your private configuration here! Remember, you do not need to run 'doom
-;; sync' after modifying this file!
-
-
-;; Some functionality uses this to identify you, e.g. GPG configuration, email
-;; clients, file templates and snippets. It is optional.
 (setq user-full-name "Mads Bach Villadsen"
       user-mail-address "mvilladsen@pm.me")
-
-;; Doom exposes five (optional) variables for controlling fonts in Doom:
-;;
-;; - `doom-font' -- the primary font to use
-;; - `doom-variable-pitch-font' -- a non-monospace font (where applicable)
-;; - `doom-big-font' -- used for `doom-big-font-mode'; use this for
-;;   presentations or streaming.
-;; - `doom-unicode-font' -- for unicode glyphs
-;; - `doom-serif-font' -- for the `fixed-pitch-serif' face
-;;
-;; See 'C-h v doom-font' for documentation and more examples of what they
-;; accept. For example:
-;;
-;;(setq doom-font (font-spec :family "Fira Code" :size 12 :weight 'semi-light)
-;;      doom-variable-pitch-font (font-spec :family "Fira Sans" :size 13))
-;;
-;; If you or Emacs can't find your font, use 'M-x describe-font' to look them
-;; up, `M-x eval-region' to execute elisp code, and 'M-x doom/reload-font' to
-;; refresh your font settings. If Emacs still can't find your font, it likely
-;; wasn't installed correctly. Font issues are rarely Doom issues!
-
-;; There are two ways to load a theme. Both assume the theme is installed and
-;; available. You can either set `doom-theme' or manually load a theme with the
-;; `load-theme' function. This is the default:
-;; (setq doom-theme 'doom-one)
-
-;; This determines the style of line numbers in effect. If set to `nil', line
-;; numbers are disabled. For relative line numbers, set this to `relative'.
-(setq display-line-numbers-type 'visual)
-
-;; Whenever you reconfigure a package, make sure to wrap your config in an
-;; `after!' block, otherwise Doom's defaults may override your settings. E.g.
-;;
-;;   (after! PACKAGE
-;;     (setq x y))
-;;
-;; The exceptions to this rule:
-;;
-;;   - Setting file/directory variables (like `org-directory')
-;;   - Setting variables which explicitly tell you to set them before their
-;;     package is loaded (see 'C-h v VARIABLE' to look up their documentation).
-;;   - Setting doom variables (which start with 'doom-' or '+').
-;;
-;; Here are some additional functions/macros that will help you configure Doom.
-;;
-;; - `load!' for loading external *.el files relative to this one
-;; - `use-package!' for configuring packages
-;; - `after!' for running code after a package has loaded
-;; - `add-load-path!' for adding directories to the `load-path', relative to
-;;   this file. Emacs searches the `load-path' when you load packages with
-;;   `require' or `use-package'.
-;; - `map!' for binding new keys
-;;
-;; To get information about any of these functions/macros, move the cursor over
-;; the highlighted symbol at press 'K' (non-evil users must press 'C-c c k').
-;; This will open documentation for it, including demos of how they are used.
-;; Alternatively, use `C-h o' to look up a symbol (functions, variables, faces,
-;; etc).
-;;
-;; You can also try 'gd' (or 'C-c c d') to jump to their definition and see how
-;; they are implemented.
-
-#+end_src
-* File location variables
-:PROPERTIES:
-:ID:       a4c70931-80dd-4ee9-8818-8f307ceeddbe
-:END:
-#+begin_src emacs-lisp :tangle yes
 (setq! mbv/my-personal-directory "~/Dropbox/docs/"
        mbv/my-org-directory (concat mbv/my-personal-directory "org/")
        mbv/my-papers-directory (concat mbv/my-personal-directory "work/math-resources/sources/papers/")
@@ -194,52 +63,16 @@ Evil-lion seems like a useful tool to learn, but current bindings also conflict 
        mbv/my-paper-notes-directory (concat mbv/my-org-roam-directory "paper-notes/")
        mbv/my-main-bib-file (concat mbv/my-personal-directory "work/math-resources/sources/papers.bib"))
 #+end_src
-* Config from legacy
-** desktop-save-mode 
-#+begin_src emacs-lisp :tangle no
-  ;; Save buffers between restarts
-  (setq desktop-dirname (concat user-emacs-directory "desktop/")
-        desktop-base-file-name ".emacs.desktop"
-        desktop-base-lock-name (concat desktop-base-file-name ".lock")
-	;; Move (undo) history file to computer-specific directory.
-        savehist-file (concat desktop-dirname "history")
-        ;;desktop-files-not-to-save "" ; If filename matches given regexp, do not save buffer
-        desktop-path (list desktop-dirname)
-        desktop-save t
-        desktop-auto-save-timeout 30 ; Default auto-save timeout, made explicit
-        desktop-file-name-format 'tilde ; Save file paths relative to ~ (works in particular with Dropbox symlink)
-        desktop-restore-frames t
-        desktop-restore-in-current-display nil
-        desktop-restore-forces-onscreen nil)
-  (desktop-save-mode 1)
-  (save-place-mode 1)
-
-  ;; Save a list of recent files visited.
-  (recentf-mode 1)
-  (setq recentf-max-saved-items 1000) ;; just 20 is too recent
-
-  ;; Save minibuffer history
-  (savehist-mode 1)
-  (setq history-length 1000)
-#+end_src
-* Emacs server
-:PROPERTIES:
-:ID:       4606322c-471e-4579-9ac4-2ce63506e971
-:END:
-#+begin_src emacs-lisp :tangle yes
-(server-start)
-#+end_src
-* Packages and Doom module config
-** doom
-:PROPERTIES:
-:ID:       5d289674-46be-4681-8772-37561467d5b8
-:END:
-#+begin_src emacs-lisp :tangle yes
+*** Basic UI
+#+begin_src emacs-lisp
+;; enable word-wrap (almost) everywhere
+(+global-word-wrap-mode +1)
+(setq display-line-numbers-type 'visual)
 (setq! doom-molokai-brighter-comments t)
 (setq! doom-molokai-brighter-modeline t)
 (setq! doom-theme 'doom-molokai)
 #+end_src
-** evil
+*** evil
 :PROPERTIES:
 :ID:       12e4d4eb-378b-46e9-9d97-c4af4d7f39ae
 :END:
@@ -267,14 +100,78 @@ Evil-lion seems like a useful tool to learn, but current bindings also conflict 
   (call-interactively #'evil-yank)
   (setq x-select-enable-clipboard nil))
 #+end_src
-*** evil-matchit
+**** evil-matchit
 :PROPERTIES:
 :ID:       9c76ed39-ee3e-4e89-8713-ce3b77dc66dd
 :END:
 #+begin_src emacs-lisp :tangle yes
 (global-evil-matchit-mode 1)
 #+end_src
-** company
+*** snippet
+:PROPERTIES:
+:ID:       522dd2b3-4c09-4ef8-81df-ce520e8959f2
+:END:
+#+begin_src emacs-lisp :tangle yes
+;; Nested snippets
+(after! yasnippet
+  (setq! yas-triggers-in-field t))
+(map! :after yasnippet
+      "C-s" #'yas-next-field)
+#+end_src
+
+*** workspaces
+:PROPERTIES:
+:ID:       91d88b8d-c942-4037-8411-6de47f2de9df
+:END:
+
+#+begin_src emacs-lisp :tangle yes
+;; Control which workspace new frame are initialized with when opened with emacsclient.
+;; The default value +workspaces-associate-frame-fn creates a new workspace every time.
+;; With nil, it just opens in some existing workspace.
+(setq persp-emacsclient-init-frame-behaviour-override nil)
+#+end_src
+*** Convenience functions
+:PROPERTIES:
+:ID:       e5879a87-628a-4e45-bc64-1e0cec4e1410
+:END:
+Note: I previously had a 'mbv/open-finder-here', but Doom actually provides that natively with '<leader> o o'.
+#+begin_src emacs-lisp :tangle yes
+(defun mbv/run-kitty-here ()
+  (interactive)
+  (shell-command (concat "kitty --single-instance "
+            (file-name-directory (or load-file-name buffer-file-name))
+              " > /dev/null 2>&1 & disown") nil nil))
+
+(defun mbv/open-externally ()
+  (interactive)
+  (shell-command (concat "open " buffer-file-name " > /dev/null 2>&1 & disown") nil nil))
+
+(map! :leader
+      :n "o C-t" #'mbv/run-kitty-here)
+#+end_src
+
+*** Performance
+Based on https://github.com/brotzeit/rustic/issues/312#issuecomment-1113738865, while high gcmh-idle-delay can prevent gc from running while active, it can also cause memory pressure to accumulate enough that in cases where gc runs while active, it's worse than otherwise.
+
+Note: By default in Doom, this is set to auto. We could also play with the parameters of that.
+#+begin_src emacs-lisp :tangle yes
+(setq! gcmh-idle-delay 'auto
+       gcmh-low-cons-threshold (* 800 1000)           ;; Default value 800000
+       gcmh-high-cons-threshold (* 33 1024 1024))         ;; Default value 33554432
+
+;; From https://www.reddit.com/r/emacs/comments/14c4l8j/way_to_make_emacs_feel_smoother/
+(setq! jit-lock-stealth-time 1.25)
+(setq! jit-lock-chunk-size 2048)
+#+end_src
+*** Emacs server
+:PROPERTIES:
+:ID:       4606322c-471e-4579-9ac4-2ce63506e971
+:END:
+#+begin_src emacs-lisp :tangle yes
+(server-start)
+#+end_src
+** Completion
+*** company
 :PROPERTIES:
 :ID:       248fc78a-f917-4379-b852-a3dba2574724
 :END:
@@ -290,7 +187,7 @@ Evil-lion seems like a useful tool to learn, but current bindings also conflict 
      "C-<return>" #'company-complete-selection)
 (setq! company-idle-delay 0.4)
 #+end_src
-** vertico
+*** vertico
 :PROPERTIES:
 :ID:       e2d44da6-e2c8-441c-a741-72e191b8bd6f
 :END:
@@ -301,12 +198,8 @@ Evil-lion seems like a useful tool to learn, but current bindings also conflict 
       '((left-fringe . 8)
         (right-fringe . 8)))
 #+end_src
-** word-wrap
-#+begin_src emacs-lisp
-;; enable word-wrap (almost) everywhere
-(+global-word-wrap-mode +1)
-#+end_src
-** TODO biblio
+** Documents
+*** TODO biblio
 :PROPERTIES:
 :ID:       72045c34-0fe5-4ac3-8586-753211054673
 :END:
@@ -333,7 +226,7 @@ Maybe define a general function to rectify pdf file name for any entry, and call
       "o" #'citar-open
       "i" #'citar-insert-citation)
 #+end_src
-*** org-noter
+**** org-noter
 :PROPERTIES:
 :ID:       1a703448-20ea-48e7-8e38-3adba05dd374
 :END:
@@ -342,24 +235,15 @@ Maybe define a general function to rectify pdf file name for any entry, and call
   (setq! org-noter-hide-other nil
          org-noter-notes-search-path mbv/my-paper-notes-directory))
 #+end_src
-** ledger
-:PROPERTIES:
-:ID:       fd2d4160-2733-4f26-bd40-3ce1f6202325
-:END:
-#+begin_src emacs-lisp :tangle yes
-(after! ledger-mode
-  (setq! ledger-complete-in-steps t
-         ledger-post-amount-alignment-column 62))
-#+end_src
-** latex
-*** RefTeX
+*** latex
+**** RefTeX
 :PROPERTIES:
 :ID:       2e9cb8fe-74ad-4581-877d-60782eed5760
 :END:
 #+begin_src emacs-lisp :tangle yes
 (setq! reftex-default-bibliography mbv/my-main-bib-file)
 #+end_src
-*** PDF viewer
+**** PDF viewer
 :PROPERTIES:
 :ID:       8d7e8cc1-648f-46c0-9337-fd129c854a97
 :END:
@@ -368,7 +252,7 @@ Maybe define a general function to rectify pdf file name for any entry, and call
 ;; For synctex
 (setq TeX-source-correlate-start-server t)
 #+end_src
-*** cdlatex
+**** cdlatex
 :PROPERTIES:
 :ID:       c1c78b2d-e66e-4953-99b2-232cc8ad691f
 :END:
@@ -412,29 +296,6 @@ According to https://lists.gnu.org/archive/html/emacs-orgmode/2011-10/msg00716.h
 (setq cdlatex-use-dollar-to-ensure-math nil)
 #+end_src
 
-** org
-:PROPERTIES:
-:ID:       b0fafc69-1a25-468b-bd79-83067b889d39
-:END:
-#+begin_src emacs-lisp           :tangle yes
-(setq! org-directory mbv/my-org-directory)
-(after! org
-  (setq! ;; Recursively check a list of directories, thanks to https://www.reddit.com/r/orgmode/comments/6q6cdk/adding_files_to_the_agenda_list_recursively/
-         ;; To specify single files, if necessary, would have to append them to org-agenda-files separately.
-         ;;(org-agenda-files (apply 'append
-           ;;                       (mapcar
-             ;;                      (lambda (directory)
-               ;;                      (directory-files-recursively
-                 ;;                     directory org-agenda-file-regexp))
-                   ;;                `(,mbv/my-org-directory)))) ;; Can add to the list containing ,mbv/my-org-directory
-
-         org-src-window-setup 'split-window-below
-         org-refile-allow-creating-parent-nodes 'confirm
-         org-return-follows-link t))
-;; Not sure whether something like this is needed.
-;; (map! :mode org-mode
-;;       :n "RET" nil)
-#+end_src
 *** org/latex setup
     :PROPERTIES:
     :ID:       a1e22973-e0e1-497e-94de-1b4c291033c6
@@ -751,6 +612,146 @@ Note that trying to generate many fragments at once causes some slowdown, since 
   \let\subsubsectionautorefname\sectionautorefname
  #+end_example
 
+*** org-ref
+:PROPERTIES:
+:ID:       b5e82625-5a07-49c3-bee4-6dba80416507
+:END:
+This is only used to get access to functions used to transition away from org-ref to org-cite.
+That said, the hydra provided by org-ref is quite nice...
+TODO: Figure out how to manage bib files directly in emacs; org-ref may be part of that.
+
+TODO: Rewrite this to use type citation instead of citation-reference. Then we don't have to do the manual format, it'll support global pre and post-fix. We should also find a way to record post-blank on parsing, and pass that to the citation.
+#+begin_src emacs-lisp :tangle yes
+(after! org-ref
+  (setq! org-ref-insert-cite-function 'org-cite-insert)
+  (defun mbv/org-ref-v3-to-org-cite ()
+    (interactive)
+    (require 'org-ref)
+    (require 'org-ref-citation-links)
+    (require 'oc)
+    (require 'org-element)
+    ;; Collect org-ref citation link objects
+    (let ((cites (reverse (org-element-map (org-element-parse-buffer) 'link
+                            (lambda (lnk)
+                              (when (member (org-element-property :type lnk)
+                                            (mapcar 'car org-ref-cite-types))
+                                lnk))))))
+      (cl-loop for cite in cites do
+               ;; Substitute each org-ref link with the corresponding org-cite link.
+               ;; Does not currently support global suffix and prefix, but I don't
+               ;; think I ever use that
+               (cl--set-buffer-substring
+                (org-element-property :begin cite)
+                (org-element-property :end cite)
+                (format "[cite:%s]%s"
+                        (mbv/org-ref-element-to-org-cite-citation-string cite)
+                        ;; Blank space after the link is part of the cite object;
+                        ;; reinsert it.
+                        (make-string (org-element-property :post-blank cite) ?\ ))))))
+
+  (defun mbv/org-ref-element-to-org-cite-citation-string (cite)
+    ;; Use the builtin org-ref parser to turn citation link into a plist,
+    ;; then convert that plist into the internal org format citation-reference
+    ;; for citations, and use the built-in org interpreter to turn this into a string.
+    (let ((data (org-ref-parse-cite-path (org-element-property :path cite))))
+      (let ((cite-string
+             (org-element-interpret-data
+              (cl-loop for cite-reference in (plist-get data :references) collect
+                       `(citation-reference
+                         (:key ,(plist-get cite-reference :key)
+                          :prefix ,(plist-get cite-reference :prefix)
+                          :suffix ,(plist-get cite-reference :suffix)))))))
+        ;; Remove unnecessary trailing semicolon.
+        (substring cite-string 0 -1)))))
+#+end_src
+*** [?] org-noter
+:PROPERTIES:
+:ID:       9fa1c0ab-1397-4f9e-9025-a240a5a010a7
+:END:
+I really want org-noter-insert-note bound to "i", but I don't know how to do that.
+TODO: Make the insert functions also enter insert-mode in the org buffer.
+#+begin_src emacs-lisp :tangle yes
+(map! :map org-noter-doc-mode-map
+      "M-i" #'org-noter-insert-note
+      "C-M-i" #'org-noter-insert-precise-note)
+#+end_src
+*** org-fragtog
+:PROPERTIES:
+:ID:       b436aa20-85bb-464a-bb78-00559f4fff16
+:END:
+#+begin_src emacs-lisp :tangle yes
+(add-hook 'org-mode-hook 'org-fragtog-mode)
+#+end_src
+*** pdf-view
+:PROPERTIES:
+:ID:       c1fe9cd6-47ff-4ba9-b115-ce09e69fbc09
+:END:
+#+begin_src emacs-lisp :tangle yes
+  (setq! pdf-view-resize-factor 1.1
+        pdf-view-continuous nil
+        pdf-view-display-size 'fit-page)
+(map! :mode pdf-view-mode
+      :nv "`" #'pdf-view-jump-to-register)
+#+end_src
+** Programming
+*** rust
+TODO: adaptive-wrap-prefix-mode causes issues with rustic-mode, add hook to disable
+Might also want to disable smartparens-mode
+#+begin_src emacs-lisp :tangle yes
+(setq! lsp-rust-analyzer-cargo-watch-command "clippy"
+       lsp-inlay-hints-mode t
+       lsp-rust-analyzer-display-lifetime-elision-hints-enable "skip_trivial"
+       lsp-rust-analyzer-display-chaining-hints t
+       lsp-rust-analyzer-display-lifetime-elision-hints-use-parameter-names nil
+       lsp-rust-analyzer-display-closure-return-type-hints t
+       lsp-rust-analyzer-display-parameter-hints nil
+       lsp-rust-analyzer-display-reborrow-hints nil
+       lsp-ui-peek-always-show t
+       lsp-ui-sideline-show-hover t
+       lsp-ui-doc-enable nil)
+
+(add-hook! rustic-mode #'turn-off-smartparens-mode)
+(appendq! +word-wrap-visual-modes '(rustic-mode))
+#+end_src
+*** csv-mode
+:PROPERTIES:
+:ID:       91df0cdb-0c1c-4922-8af3-a104bcedb13a
+:END:
+#+begin_src emacs-lisp :tangle yes
+(add-hook! csv-mode :append '(csv-align-mode csv-header-line))
+#+end_src
+** ledger
+:PROPERTIES:
+:ID:       fd2d4160-2733-4f26-bd40-3ce1f6202325
+:END:
+#+begin_src emacs-lisp :tangle yes
+(after! ledger-mode
+  (setq! ledger-complete-in-steps t
+         ledger-post-amount-alignment-column 62))
+#+end_src
+** org
+:PROPERTIES:
+:ID:       b0fafc69-1a25-468b-bd79-83067b889d39
+:END:
+#+begin_src emacs-lisp           :tangle yes
+(setq! org-directory mbv/my-org-directory)
+(after! org
+  (setq! ;; Recursively check a list of directories, thanks to https://www.reddit.com/r/orgmode/comments/6q6cdk/adding_files_to_the_agenda_list_recursively/
+         ;; To specify single files, if necessary, would have to append them to org-agenda-files separately.
+         ;;(org-agenda-files (apply 'append
+           ;;                       (mapcar
+             ;;                      (lambda (directory)
+               ;;                      (directory-files-recursively
+                 ;;                     directory org-agenda-file-regexp))
+                   ;;                `(,mbv/my-org-directory)))) ;; Can add to the list containing ,mbv/my-org-directory
+
+         org-src-window-setup 'split-window-below
+         org-refile-allow-creating-parent-nodes 'confirm
+         org-return-follows-link t))
+;; Not sure whether something like this is needed.
+;; (map! :mode org-mode
+;;       :n "RET" nil)
+#+end_src
 *** org-id
     :PROPERTIES:
     :ID:       e63541f2-d373-42cb-ace7-d69e8ba7afe1
@@ -843,75 +844,34 @@ TODO: Make this actually work well.
          org-roam-server-network-label-truncate-length 60
          org-roam-server-network-label-wrap-length 20))
 #+end_src
-*** org-ref
+*** deft
 :PROPERTIES:
-:ID:       b5e82625-5a07-49c3-bee4-6dba80416507
+:ID:       599f0c3f-3533-4e09-9c25-8615d045ef4f
 :END:
-This is only used to get access to functions used to transition away from org-ref to org-cite.
-That said, the hydra provided by org-ref is quite nice...
-TODO: Figure out how to manage bib files directly in emacs; org-ref may be part of that.
+#+begin_src emacs-lisp :tangle yes
+(after! deft
+  (setq! deft-recursive t
+  deft-use-filter-string-for-filename t
+  deft-default-extension "org"
+  deft-directory org-roam-directory)
+  (defun cm/deft-parse-title (file contents)
+    "Parse the given FILE and CONTENTS and determine the title.
+  If `deft-use-filename-as-title' is nil, the title is taken to
+  be the first non-empty line of the FILE.  Else the base name of the FILE is
+  used as title."
+      (let ((begin (string-match "^#\\+[tT][iI][tT][lL][eE]: .*$" contents)))
+	(if begin
+	    (string-trim (substring contents begin (match-end 0)) "#\\+[tT][iI][tT][lL][eE]: *" "[\n\t ]+")
+	  (deft-base-filename file))))
 
-TODO: Rewrite this to use type citation instead of citation-reference. Then we don't have to do the manual format, it'll support global pre and post-fix. We should also find a way to record post-blank on parsing, and pass that to the citation.
-#+begin_src emacs-lisp :tangle yes
-(after! org-ref
-  (setq! org-ref-insert-cite-function 'org-cite-insert)
-  (defun mbv/org-ref-v3-to-org-cite ()
-    (interactive)
-    (require 'org-ref)
-    (require 'org-ref-citation-links)
-    (require 'oc)
-    (require 'org-element)
-    ;; Collect org-ref citation link objects
-    (let ((cites (reverse (org-element-map (org-element-parse-buffer) 'link
-                            (lambda (lnk)
-                              (when (member (org-element-property :type lnk)
-                                            (mapcar 'car org-ref-cite-types))
-                                lnk))))))
-      (cl-loop for cite in cites do
-               ;; Substitute each org-ref link with the corresponding org-cite link.
-               ;; Does not currently support global suffix and prefix, but I don't
-               ;; think I ever use that
-               (cl--set-buffer-substring
-                (org-element-property :begin cite)
-                (org-element-property :end cite)
-                (format "[cite:%s]%s"
-                        (mbv/org-ref-element-to-org-cite-citation-string cite)
-                        ;; Blank space after the link is part of the cite object;
-                        ;; reinsert it.
-                        (make-string (org-element-property :post-blank cite) ?\ ))))))
+    (advice-add 'deft-parse-title :override #'cm/deft-parse-title)
 
-  (defun mbv/org-ref-element-to-org-cite-citation-string (cite)
-    ;; Use the builtin org-ref parser to turn citation link into a plist,
-    ;; then convert that plist into the internal org format citation-reference
-    ;; for citations, and use the built-in org interpreter to turn this into a string.
-    (let ((data (org-ref-parse-cite-path (org-element-property :path cite))))
-      (let ((cite-string
-             (org-element-interpret-data
-              (cl-loop for cite-reference in (plist-get data :references) collect
-                       `(citation-reference
-                         (:key ,(plist-get cite-reference :key)
-                          :prefix ,(plist-get cite-reference :prefix)
-                          :suffix ,(plist-get cite-reference :suffix)))))))
-        ;; Remove unnecessary trailing semicolon.
-        (substring cite-string 0 -1)))))
-#+end_src
-*** [?] org-noter
-:PROPERTIES:
-:ID:       9fa1c0ab-1397-4f9e-9025-a240a5a010a7
-:END:
-I really want org-noter-insert-note bound to "i", but I don't know how to do that.
-TODO: Make the insert functions also enter insert-mode in the org buffer.
-#+begin_src emacs-lisp :tangle yes
-(map! :map org-noter-doc-mode-map
-      "M-i" #'org-noter-insert-note
-      "C-M-i" #'org-noter-insert-precise-note)
-#+end_src
-*** org-fragtog
-:PROPERTIES:
-:ID:       b436aa20-85bb-464a-bb78-00559f4fff16
-:END:
-#+begin_src emacs-lisp :tangle yes
-(add-hook 'org-mode-hook 'org-fragtog-mode)
+    (setq deft-strip-summary-regexp
+	  (concat "\\("
+		  "[\n\t]" ;; blank
+		  "\\|^#\\+[[:alpha:]_]+:.*$" ;; org-mode metadata
+		  "\\|^:PROPERTIES:\n\\(.+\n\\)+:END:\n"
+		  "\\)")))
 #+end_src
 ** calendar
 *** TODO org-gcal
@@ -957,90 +917,6 @@ TODO: Integration with org-agenda involves switching this to pull directly from 
     (cfw:org-create-file-source "timekeeping" (concat org-directory "calendar-timekeeping.org") "Green")
     (cfw:org-create-file-source "madsbv96" (concat org-directory "calendar-madsbv96.org") "Red"))))
 #+end_src
-** pdf-view
-:PROPERTIES:
-:ID:       c1fe9cd6-47ff-4ba9-b115-ce09e69fbc09
-:END:
-#+begin_src emacs-lisp :tangle yes
-  (setq! pdf-view-resize-factor 1.1
-        pdf-view-continuous nil
-        pdf-view-display-size 'fit-page)
-(map! :mode pdf-view-mode
-      :nv "`" #'pdf-view-jump-to-register)
-#+end_src
-** deft
-:PROPERTIES:
-:ID:       599f0c3f-3533-4e09-9c25-8615d045ef4f
-:END:
-#+begin_src emacs-lisp :tangle yes
-(after! deft
-  (setq! deft-recursive t
-  deft-use-filter-string-for-filename t
-  deft-default-extension "org"
-  deft-directory org-roam-directory)
-  (defun cm/deft-parse-title (file contents)
-    "Parse the given FILE and CONTENTS and determine the title.
-  If `deft-use-filename-as-title' is nil, the title is taken to
-  be the first non-empty line of the FILE.  Else the base name of the FILE is
-  used as title."
-      (let ((begin (string-match "^#\\+[tT][iI][tT][lL][eE]: .*$" contents)))
-	(if begin
-	    (string-trim (substring contents begin (match-end 0)) "#\\+[tT][iI][tT][lL][eE]: *" "[\n\t ]+")
-	  (deft-base-filename file))))
-
-    (advice-add 'deft-parse-title :override #'cm/deft-parse-title)
-
-    (setq deft-strip-summary-regexp
-	  (concat "\\("
-		  "[\n\t]" ;; blank
-		  "\\|^#\\+[[:alpha:]_]+:.*$" ;; org-mode metadata
-		  "\\|^:PROPERTIES:\n\\(.+\n\\)+:END:\n"
-		  "\\)")))
-#+end_src
-** snippet
-:PROPERTIES:
-:ID:       522dd2b3-4c09-4ef8-81df-ce520e8959f2
-:END:
-#+begin_src emacs-lisp :tangle yes
-;; Nested snippets
-(after! yasnippet
-  (setq! yas-triggers-in-field t))
-(map! :after yasnippet
-      "C-s" #'yas-next-field)
-#+end_src
-
-** workspaces
-:PROPERTIES:
-:ID:       91d88b8d-c942-4037-8411-6de47f2de9df
-:END:
-
-#+begin_src emacs-lisp :tangle yes
-;; Control which workspace new frame are initialized with when opened with emacsclient.
-;; The default value +workspaces-associate-frame-fn creates a new workspace every time.
-;; With nil, it just opens in some existing workspace.
-(setq persp-emacsclient-init-frame-behaviour-override nil)
-#+end_src
-** magit
-:PROPERTIES:
-:ID:       5483b3ab-c12d-4e62-b4c2-6a2a644ba420
-:END:
-#+begin_src emacs-lisp :tangle yes
-;; Making magit and yadm (utility I use for managing dotfiles) cooperate. Run (magit-status "/yadm::"). Taken from: https://github.com/TheLocehiliosan/yadm/blob/master/yadm.md
-(after! magit
-  (require 'tramp)
-  (add-to-list 'tramp-methods
-               '("yadm"
-                 (tramp-login-program "yadm")
-                 (tramp-login-args (("enter")))
-                 (tramp-login-env (("SHELL") ("/bin/sh")))
-                 (tramp-remote-shell "/bin/sh")
-                 (tramp-remote-shell-args ("-c"))))
-
-  (defun mbv/yadm ()
-    (interactive)
-    (magit-status "/yadm::")))
-#+end_src
-
 ** mu4e
 :PROPERTIES:
 :ID:       caded08a-c2a1-4133-a6cd-7d9f613db211
@@ -1101,63 +977,4 @@ Mads")
 
 
 (setq message-send-mail-function 'smtpmail-send-it)
-#+end_src
-** rust
-TODO: adaptive-wrap-prefix-mode causes issues with rustic-mode, add hook to disable
-Might also want to disable smartparens-mode
-#+begin_src emacs-lisp :tangle yes
-(setq! lsp-rust-analyzer-cargo-watch-command "clippy"
-       lsp-inlay-hints-mode t
-       lsp-rust-analyzer-display-lifetime-elision-hints-enable "skip_trivial"
-       lsp-rust-analyzer-display-chaining-hints t
-       lsp-rust-analyzer-display-lifetime-elision-hints-use-parameter-names nil
-       lsp-rust-analyzer-display-closure-return-type-hints t
-       lsp-rust-analyzer-display-parameter-hints nil
-       lsp-rust-analyzer-display-reborrow-hints nil
-       lsp-ui-peek-always-show t
-       lsp-ui-sideline-show-hover t
-       lsp-ui-doc-enable nil)
-
-(add-hook! rustic-mode #'turn-off-smartparens-mode)
-(appendq! +word-wrap-visual-modes '(rustic-mode))
-#+end_src
-** csv-mode
-:PROPERTIES:
-:ID:       91df0cdb-0c1c-4922-8af3-a104bcedb13a
-:END:
-#+begin_src emacs-lisp :tangle yes
-(add-hook! csv-mode :append '(csv-align-mode csv-header-line))
-#+end_src
-** Convenience functions
-:PROPERTIES:
-:ID:       e5879a87-628a-4e45-bc64-1e0cec4e1410
-:END:
-Note: I previously had a 'mbv/open-finder-here', but Doom actually provides that natively with '<leader> o o'.
-#+begin_src emacs-lisp :tangle yes
-(defun mbv/run-kitty-here ()
-  (interactive)
-  (shell-command (concat "kitty --single-instance "
-            (file-name-directory (or load-file-name buffer-file-name))
-              " > /dev/null 2>&1 & disown") nil nil))
-
-(defun mbv/open-externally ()
-  (interactive)
-  (shell-command (concat "open " buffer-file-name " > /dev/null 2>&1 & disown") nil nil))
-
-(map! :leader
-      :n "o C-t" #'mbv/run-kitty-here)
-#+end_src
-
-** Performance
-Based on https://github.com/brotzeit/rustic/issues/312#issuecomment-1113738865, while high gcmh-idle-delay can prevent gc from running while active, it can also cause memory pressure to accumulate enough that in cases where gc runs while active, it's worse than otherwise.
-
-Note: By default in Doom, this is set to auto. We could also play with the parameters of that.
-#+begin_src emacs-lisp :tangle yes
-(setq! gcmh-idle-delay 'auto
-       gcmh-low-cons-threshold (* 800 1000)           ;; Default value 800000
-       gcmh-high-cons-threshold (* 33 1024 1024))         ;; Default value 33554432
-
-;; From https://www.reddit.com/r/emacs/comments/14c4l8j/way_to_make_emacs_feel_smoother/
-(setq! jit-lock-stealth-time 1.25)
-(setq! jit-lock-chunk-size 2048)
 #+end_src
