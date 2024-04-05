@@ -1,5 +1,5 @@
 #+title: Config
-* TODO Notes
+* Notes
 ** Ideas
 *** Org-mode font lock optimization ideas
 - Play with font-lock-maximum-decoration
@@ -22,14 +22,6 @@
                                  (file-name-nondirectory file)))))
 (tree-sitter-langs-build--fixup-shared-objects-for-treesit)
 #+end_src
-** TODO Doom modules to check flags and config for later
-- company
-  - Useful
-- vertico
-  - Useful
-
-** TODO evil-lion
-Evil-lion seems like a useful tool to learn, but current bindings also conflict with org-mode. Do some rebinding.
 * Package installation
 :PROPERTIES:
 :ID:       5d78469c-8157-4f3f-b49e-e3e1046eff6f
@@ -59,7 +51,7 @@ Evil-lion seems like a useful tool to learn, but current bindings also conflict 
 (setq! mbv/my-personal-directory "~/Dropbox/docs/"
        mbv/my-org-directory (concat mbv/my-personal-directory "org/")
        mbv/my-papers-directory (concat mbv/my-personal-directory "work/math-resources/sources/papers/")
-       mbv/my-org-roam-directory (concat mbv/my-personal-directory "work/math-resources/org-roam/")
+       mbv/my-org-roam-directory (concat mbv/my-org-directory "org-roam/")
        mbv/my-paper-notes-directory (concat mbv/my-org-roam-directory "paper-notes/")
        mbv/my-main-bib-file (concat mbv/my-personal-directory "work/math-resources/sources/papers.bib"))
 #+end_src
@@ -751,6 +743,44 @@ Might also want to disable smartparens-mode
 ;; Not sure whether something like this is needed.
 ;; (map! :mode org-mode
 ;;       :n "RET" nil)
+#+end_src
+*** org-gtd
+:PROPERTIES:
+:ID:       org-gtd-2024-04-05-16-13-44
+:END:
+#+begin_src emacs-lisp :tangle yes
+(use-package! org-gtd
+  :after org
+  :init
+  (setq org-gtd-update-ack "3.0.0")
+  :config
+  (setq! org-gtd-directory (concat mbv/my-org-directory "gtd/"))
+  (setq org-edna-use-inheritance t)
+  (org-edna-mode)
+  (map! :leader
+        (:prefix ("d" . "org-gtd")
+         :desc "Capture"        "c"  #'org-gtd-capture
+         :desc "Engage"         "e"  #'org-gtd-engage
+         :desc "Process inbox"  "p"  #'org-gtd-process-inbox
+         :desc "Show all next"  "n"  #'org-gtd-show-all-next
+         :desc "Stuck projects" "s"  #'org-gtd-review-stuck-projects
+         :desc "Organize this item" "o" #'org-gtd-organize)))
+#+end_src
+**** Automation/email integration
+:PROPERTIES:
+:ID:       11043675-99ef-410e-8a47-bea909776e21
+:END:
+This is an example from the org-gtd manual showing how to integrate. This particular function is not exactly what we want, but could be a useful template.
+#+begin_src emacs-lisp :tangle no
+  (defun org-gtd-email-reminder ()
+    (let ((topic (message-fetch-field "subject"))
+          (delegated-to (message-fetch-field "to"))
+          (reminder-date (org-read-date nil nil "+3d")))
+      (org-gtd-delegate-create (format "Reminder: %s" topic)
+                               delegated-to
+                               reminder-date)))
+
+  (add-hook 'message-send-hook 'org-gtd-email-reminder)
 #+end_src
 *** org-id
     :PROPERTIES:
