@@ -757,6 +757,26 @@ Might also want to disable smartparens-mode
   (setq! org-gtd-directory (concat mbv/my-org-directory "gtd/"))
   (setq org-edna-use-inheritance t)
   (org-edna-mode)
+
+  (defun mu4e-org-gtd-store-and-capture()
+    (interactive)
+    (with-org-gtd-capture (call-interactively #'mu4e-org-store-and-capture)))
+
+  ;; TODO: Find a way to add the link from mu4e to the body.
+  ;; It should be possible to modify the implementation of org-gtd-delegate-create, the main
+  ;; question is how to format the link object correctly. If we could use the org capture
+  ;; template functionality that would help.
+  ;; Maybe we just create an org-gtd capture template targeted at delegated stuff?
+  (defun mu4e-org-gtd-email-reminder ()
+    (interactive)
+    (let ((subject (message-fetch-field "subject"))
+          (to (message-fetch-field "to"))
+          (link (mu4e-org-store-link))
+          (reminder-date (org-read-date nil nil "+3d")))
+      (org-gtd-delegate-create (format "Reminder: %s, %s" subject)
+                               to
+                               reminder-date)))
+
   (map! :leader
         (:prefix ("d" . "org-gtd")
          :desc "Capture"        "c"  #'org-gtd-capture
@@ -764,7 +784,12 @@ Might also want to disable smartparens-mode
          :desc "Process inbox"  "p"  #'org-gtd-process-inbox
          :desc "Show all next"  "n"  #'org-gtd-show-all-next
          :desc "Stuck projects" "s"  #'org-gtd-review-stuck-projects
-         :desc "Organize this item" "o" #'org-gtd-organize)))
+         :desc "Organize this item" "o" #'org-gtd-organize)
+        ;; TODO: Should we separate these by mode instead of creating longer prefixes?
+        ;; Also: Add agenda bindings (either by mode or under "<leader> d a").
+        (:prefix ("d m" . "org-gtd-mu4e")
+         :desc "Capture mail" "c" #'mu4e-org-gtd-store-and-capture
+         :desc "Delegate task via mail" "d" #'mu4e-org-gtd-email-reminder)))
 #+end_src
 **** Automation/email integration
 :PROPERTIES:
@@ -772,11 +797,13 @@ Might also want to disable smartparens-mode
 :END:
 This is an example from the org-gtd manual showing how to integrate. This particular function is not exactly what we want, but could be a useful template.
 #+begin_src emacs-lisp :tangle no
+
   (defun org-gtd-email-reminder ()
-    (let ((topic (message-fetch-field "subject"))
-          (delegated-to (message-fetch-field "to"))
+    (let ((subject (message-fetch-field "subject"))
+          (to (message-fetch-field "to"))
+          (link (mu4e-org-store-link))
           (reminder-date (org-read-date nil nil "+3d")))
-      (org-gtd-delegate-create (format "Reminder: %s" topic)
+      (org-gtd-delegate-create (format "Reminder: %s, %s" topic link)
                                delegated-to
                                reminder-date)))
 
@@ -964,10 +991,10 @@ TODO: Set up HU email.
 (setq mu4e-update-interval (* 10 60)) ; check mail every 10 minutes
 
 (set-email-account! "mvilladsen@pm.me"
-                    '((mu4e-sent-folder . "/proton/Sent")
-                      (mu4e-drafts-folder     . "/proton/Drafts")
-                      (mu4e-trash-folder      . "/proton/Trash")
-                      (mu4e-refile-folder     . "/proton/Archive")
+                    '((mu4e-sent-folder . "/Proton/Sent")
+                      (mu4e-drafts-folder     . "/Proton/Drafts")
+                      (mu4e-trash-folder      . "/Proton/Trash")
+                      (mu4e-refile-folder     . "/Proton/Archive")
                       (mu4e-compose-signature . "Best,
 Mads")
                       ;; (+mu4e-personal-addresses . "mvilladsen@pm.me")
@@ -978,12 +1005,12 @@ Mads")
 
 (setq mu4e-maildir-shortcuts
   '(
-    (:maildir "/proton/inbox"     :key  ?i)
-    (:maildir "/proton/Archive"   :key  ?a)
-    (:maildir "/proton/Drafts"     :key  ?d)
-    (:maildir "/proton/Sent"      :key  ?s)
-    (:maildir "/proton/Folders/Math/EAGER-GEN" :key ?e)
-    (:maildir "/proton/Folders/Math/arXiv" :key ?x)
+    (:maildir "/Proton/Inbox"     :key  ?i)
+    (:maildir "/Proton/Archive"   :key  ?a)
+    (:maildir "/Proton/Drafts"     :key  ?d)
+    (:maildir "/Proton/Sent"      :key  ?s)
+    (:maildir "/Proton/Folders/Math/EAGER-GEN" :key ?e)
+    (:maildir "/Proton/Folders/Math/arXiv" :key ?x)
     ))
 
 (setq mu4e-bookmarks
@@ -1002,7 +1029,7 @@ Mads")
 
 (setq mu4e-change-filenames-when-moving t ; avoid sync conflicts
       mu4e-compose-format-flowed t ; re-flow mail so it's not hard wrapped
-      mu4e-get-mail-command "mbsync -a"
+      mu4e-get-mail-command "mbsync -a" ; 'mbsync-with-config': Here mbsync is a wrapped version that specifies a custom config file location and maildir, generated from nix.
       mu4e-search-results-limit 500) ; The default is 500, we set it explicitly for possible later reference. Note that mu4e-search-toggle-property can be called to set full search to on, which then shows all results.
 
 
