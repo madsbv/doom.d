@@ -930,50 +930,6 @@ TODO: Make this actually work well.
 		  "\\|^:PROPERTIES:\n\\(.+\n\\)+:END:\n"
 		  "\\)")))
 #+end_src
-** calendar
-*** TODO org-gcal
-:PROPERTIES:
-:ID:       9c067ce1-25ee-4f3b-8e85-5389d4727a01
-:END:
-TODO: Actually integrate with Org and start using.
-- https://200ok.ch/posts/2022-02-13_integrating_org_mode_agenda_into_other_calendar_apps.html
-- https://github.com/kidd/org-gcal.el
-
-Set "echo 'allow-loopback-pinentry' >> .gnupg/gpg-agent.conf && gpgconf --reload gpg-agent". Note also that there is currently a bug in Emacs integration with gpg version 2.4.x for x>0 (https://dev.gnupg.org/T6481), seems that there's a patch on the way though.
-As of 231130, I have manually patched gnupg (brew reinstall -is) and pinned gnupg in brew to 2.4.3. Check that bug has been fixed before upgrading.
-
-Homebrew GPG patching instructions:
-1. 'brew reinstall -si gpg' - collects sources and puts you in a shell in the build directory. Tells you a prefix to install to, in this case /opt/homebrew/Cellar/gnupg/2.4.3
-2. Patch the sources, e.g. download the raw diff of a patch and 'git apply' it. In this case the patch is https://files.gnupg.net/file/data/3un4erk3tjnseburvkuy/PHID-FILE-hqe3gegzy7m6xb755z73/file
-   1. You may need to manually fit things together.
-3. For most projects, there will be some ./configure, make, make check, make install business to go through. Do:
-   1. Check the corresponding brewfile for configure commands that might be needed, and set the --prefix flag to configure. To find the brew file, try locate gpg | grep \.rb if brew edit gpg doesn't work.
-   2. The build commands will look something like: 'mkdir build && cd build && ../configure --prefix=/opt/homebrew/Cellar/gnupg/2.4.3 --enable-all-tests --with-pinentry-pgm=/opt/homebrew/bin/pinentry && make && make install && exit'
-
-#+begin_src emacs-lisp :tangle yes
-(setq org-gcal-client-id "33033572708-h0679g3cnald3pvk15l27ia562p6fej8.apps.googleusercontent.com"
-      org-gcal-client-secret "GOCSPXxm1CLX68pQZl50yWaqTNCSEMZ9HW"
-      org-gcal-fetch-file-alist `(("madsbv96@gmail.com" . ,(concat org-directory "calendar-madsbv96.org"))
-                                  ("318301d6be94b800863929948dc400142680118568b177d65627f84cbbb93a7a@group.calendar.google.com" . ,(concat org-directory "calendar-timekeeping.org"))))
-(setq plstore-cache-passphrase-for-symmetric-encryption t)
-(require 'org-gcal)
-(org-gcal-reload-client-id-secret)
-
-#+end_src
-*** TODO calfw
-:PROPERTIES:
-:ID:       69463595-2c50-4fc0-b616-810413f9d7ed
-:END:
-TODO: Integration with org-agenda involves switching this to pull directly from agenda with cfw:org-create-source instead.
-#+begin_src emacs-lisp :tangle yes
-(defun mbv/open-calendar ()
-  (interactive)
-  (cfw:open-calendar-buffer
-   :contents-sources
-   (list
-    (cfw:org-create-file-source "timekeeping" (concat org-directory "calendar-timekeeping.org") "Green")
-    (cfw:org-create-file-source "madsbv96" (concat org-directory "calendar-madsbv96.org") "Red"))))
-#+end_src
 ** mu4e
 :PROPERTIES:
 :ID:       caded08a-c2a1-4133-a6cd-7d9f613db211
