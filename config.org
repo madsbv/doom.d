@@ -779,7 +779,8 @@ Might also want to disable smartparens-mode
 
   (map! :leader
         (:prefix ("d" . "org-gtd")
-         :desc "Capture"        "c"  #'org-gtd-capture
+         :desc "Add to inbox"   "i"  #'org-gtd-capture
+         :desc "Clarify"        "c"  #'org-gtd-clarify-item
          :desc "Engage"         "e"  #'org-gtd-engage
          :desc "Process inbox"  "p"  #'org-gtd-process-inbox
          :desc "Show all next"  "n"  #'org-gtd-show-all-next
@@ -788,7 +789,7 @@ Might also want to disable smartparens-mode
         ;; TODO: Should we separate these by mode instead of creating longer prefixes?
         ;; Also: Add agenda bindings (either by mode or under "<leader> d a").
         (:prefix ("d m" . "org-gtd-mu4e")
-         :desc "Capture mail" "c" #'mu4e-org-gtd-store-and-capture
+         :desc "Add mail to org-gtd inbox" "i" #'mu4e-org-gtd-store-and-capture
          :desc "Delegate task via mail" "d" #'mu4e-org-gtd-email-reminder)))
 #+end_src
 **** Automation/email integration
