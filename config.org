@@ -792,24 +792,6 @@ Might also want to disable smartparens-mode
          :desc "Add mail to org-gtd inbox" "i" #'mu4e-org-gtd-store-and-capture
          :desc "Delegate task via mail" "d" #'mu4e-org-gtd-email-reminder)))
 #+end_src
-**** Automation/email integration
-:PROPERTIES:
-:ID:       11043675-99ef-410e-8a47-bea909776e21
-:END:
-This is an example from the org-gtd manual showing how to integrate. This particular function is not exactly what we want, but could be a useful template.
-#+begin_src emacs-lisp :tangle no
-
-  (defun org-gtd-email-reminder ()
-    (let ((subject (message-fetch-field "subject"))
-          (to (message-fetch-field "to"))
-          (link (mu4e-org-store-link))
-          (reminder-date (org-read-date nil nil "+3d")))
-      (org-gtd-delegate-create (format "Reminder: %s, %s" topic link)
-                               delegated-to
-                               reminder-date)))
-
-  (add-hook 'message-send-hook 'org-gtd-email-reminder)
-#+end_src
 *** org-id
     :PROPERTIES:
     :ID:       e63541f2-d373-42cb-ace7-d69e8ba7afe1
