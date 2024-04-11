@@ -183,9 +183,18 @@ Note: By default in Doom, this is set to auto. We could also play with the param
 :PROPERTIES:
 :ID:       e2d44da6-e2c8-441c-a741-72e191b8bd6f
 :END:
+NOTE: Sometimes the text in popup buffers shifts to the left so the start is cut off. I have tried to fix this but don't know how to recreate it reliably. However, it should be something to do with posframes.
+
+I suspect the issue has to do with vertico-posframe; in `vertico-posframe-get-size`, there's some buffer-local value handling. I don't know where those might get set, but next time there's a problem that might be something to investigate.
+
+I also found that changing the value of vertico-posframe-parameters fixes the issue when it shows up; just change it to something else, pop a posframe, then change it back again.
+
+posframe.el itself does some caching-like stuff, see https://github.com/tumashu/posframe/blob/739d8fd1081bdd0d20dee9e437d64df58747b871/posframe.el#L301-L307
+Could be worth hooking into for debugging purposes.
 #+begin_src emacs-lisp :tangle yes
 (setq! consult-locate-args "locate -i"
        vertico-posframe-poshandler 'posframe-poshandler-frame-top-center
+       vertico-posframe-truncate-lines t
        vertico-posframe-parameters
       '((left-fringe . 8)
         (right-fringe . 8)))
