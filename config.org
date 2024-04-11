@@ -737,21 +737,24 @@ Might also want to disable smartparens-mode
 #+begin_src emacs-lisp           :tangle yes
 (setq! org-directory mbv/my-org-directory)
 (after! org
-  (setq! ;; Recursively check a list of directories, thanks to https://www.reddit.com/r/orgmode/comments/6q6cdk/adding_files_to_the_agenda_list_recursively/
-         ;; To specify single files, if necessary, would have to append them to org-agenda-files separately.
-         ;;(org-agenda-files (apply 'append
-           ;;                       (mapcar
-             ;;                      (lambda (directory)
-               ;;                      (directory-files-recursively
-                 ;;                     directory org-agenda-file-regexp))
-                   ;;                `(,mbv/my-org-directory)))) ;; Can add to the list containing ,mbv/my-org-directory
-
-         org-src-window-setup 'split-window-below
+  (setq! org-src-window-setup 'split-window-below
          org-refile-allow-creating-parent-nodes 'confirm
          org-return-follows-link t))
-;; Not sure whether something like this is needed.
-;; (map! :mode org-mode
-;;       :n "RET" nil)
+
+(setq! org-agenda-files `(,org-directory ,org-gtd-directory))
+#+end_src
+*** Recursive org-agenda-files
+Recursively check a list of directories, thanks to; https://www.reddit.com/r/orgmode/comments/6q6cdk/adding_files_to_the_agenda_list_recursively/
+To specify single files, if necessary, would have to append them to org-agenda-files separately.
+
+Since org-roam is in our org directory, we don't currently use this.
+#+begin_src emacs-lisp :tangle no
+(setq! (org-agenda-files (apply 'append
+                                (mapcar
+                                 (lambda (directory)
+                                   (directory-files-recursively
+                                    directory org-agenda-file-regexp))
+                                 `(,mbv/my-org-directory))))) ;; Can add directories to the list containing ,mbv/my-org-directory;
 #+end_src
 *** org-gtd
 :PROPERTIES:
