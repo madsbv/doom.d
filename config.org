@@ -802,7 +802,10 @@ Since org-roam is in our org directory, we don't currently use this.
         ;; Also: Add agenda bindings (either by mode or under "<leader> d a").
         (:prefix ("d m" . "org-gtd-mu4e")
          :desc "Add mail to org-gtd inbox" "i" #'mu4e-org-gtd-store-and-capture
-         :desc "Delegate task via mail" "d" #'mu4e-org-gtd-email-reminder)))
+         :desc "Delegate task via mail" "d" #'mu4e-org-gtd-email-reminder)
+        (:prefix ("d a" . "org-gtd-agenda")
+         :desc "Clarify task from agenda" "c" #'org-gtd-clarify-agenda-item
+         :desc "Delegate task from agenda" "d" #'org-gtd-delegate-agenda-item)))
 #+end_src
 *** org-id
     :PROPERTIES:
