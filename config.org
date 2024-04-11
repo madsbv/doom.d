@@ -84,7 +84,7 @@
 (defun paste-from-clipboard ()
   (interactive)
   (setq x-select-enable-clipboard t)
-  (call-interactively #'evil-paste-after)
+  (call-interactively #'evil-paste-before-cursor-after)
   (setq x-select-enable-clipboard nil))
 (defun copy-to-clipboard()
   (interactive)
