@@ -162,6 +162,11 @@ Note: By default in Doom, this is set to auto. We could also play with the param
 #+begin_src emacs-lisp :tangle yes
 (server-start)
 #+end_src
+*** Meta -> Super rebindings
+#+begin_src emacs-lisp :tangle yes
+(map! "s-%" #'query-replace
+      "C-s-%" #'query-replace-regexp)
+#+end_src
 ** Completion
 *** company
 :PROPERTIES:
