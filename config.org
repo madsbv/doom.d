@@ -746,7 +746,6 @@ Might also want to disable smartparens-mode
          org-refile-allow-creating-parent-nodes 'confirm
          org-return-follows-link t))
 
-(setq! org-agenda-files `(,org-directory ,org-gtd-directory))
 #+end_src
 *** Recursive org-agenda-files
 Recursively check a list of directories, thanks to; https://www.reddit.com/r/orgmode/comments/6q6cdk/adding_files_to_the_agenda_list_recursively/
@@ -772,6 +771,7 @@ Since org-roam is in our org directory, we don't currently use this.
   (setq org-gtd-update-ack "3.0.0")
   :config
   (setq! org-gtd-directory (concat mbv/my-org-directory "gtd/"))
+  (setq! org-agenda-files `(,org-directory ,org-gtd-directory))
   (setq org-edna-use-inheritance t)
   (org-edna-mode)
 
