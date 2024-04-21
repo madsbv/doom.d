@@ -982,6 +982,7 @@ Mads")
         (:name "Messages with images" :query "mime:image/*" :hide-unread t :key ?p)
         ))
 
+(setq! mu4e-mu-binary "/etc/profiles/per-user/mvilladsen/bin/mu")
 ;; The mu search query used to count the number of 'interesting' mail to show in the mode line.
 (setq mu4e-alert-interesting-mail-query "flag:unread and not flag:trashed and not maildir:/arXiv/ and not maildir:'/All Mail/' and not maildir:/EAGER-GEN/")
 (mu4e-alert-set-default-style #'osx-notifier)
