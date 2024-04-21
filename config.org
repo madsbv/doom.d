@@ -38,6 +38,7 @@
 (package! pdf-tools :built-in 'prefer)
 (package! evil-matchit)
 (package! just-mode)
+(package! gptel)
 #+end_src
 * Config
 ** Emacs
@@ -196,6 +197,8 @@ I also found that changing the value of vertico-posframe-parameters fixes the is
 
 posframe.el itself does some caching-like stuff, see https://github.com/tumashu/posframe/blob/739d8fd1081bdd0d20dee9e437d64df58747b871/posframe.el#L301-L307
 Could be worth hooking into for debugging purposes.
+
+Running `vertico-posframe-cleanup` also fixes the issue when it occurs. Maybe run it occasionally on some timer? Would probably want to make it only happen when idle.
 #+begin_src emacs-lisp :tangle yes
 (setq! consult-locate-args "locate -i"
        vertico-posframe-poshandler 'posframe-poshandler-frame-top-center
@@ -725,6 +728,17 @@ Might also want to disable smartparens-mode
 :END:
 #+begin_src emacs-lisp :tangle yes
 (add-hook! csv-mode :append '(csv-align-mode csv-header-line))
+#+end_src
+** LLM
+*** gptel
+#+begin_src emacs-lisp :tangle yes
+(use-package! gptel
+  :config
+  (setq! gptel-model "llama3:latest"
+         gptel-backend (gptel-make-ollama "mbv-desktop"
+                                          :host "mbv-desktop:11434"
+                                          :stream t
+                                          :models '("llama3:latest" "dolphin-mixtral:latest"))))
 #+end_src
 ** ledger
 :PROPERTIES:
