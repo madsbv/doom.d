@@ -46,7 +46,7 @@
 :PROPERTIES:
 :ID:       80ba8b16-1d1e-4282-8a31-e32819a02084
 :END:
-#+begin_src emacs-lisp :tangle yes
+#+begin_src emacs-lisp
 (setq user-full-name "Mads Bach Villadsen"
       user-mail-address "mvilladsen@pm.me")
 (setq! mbv/my-personal-directory "~/Dropbox/docs/"
@@ -69,7 +69,7 @@
 :PROPERTIES:
 :ID:       12e4d4eb-378b-46e9-9d97-c4af4d7f39ae
 :END:
-#+begin_src emacs-lisp :tangle yes
+#+begin_src emacs-lisp
 (setq! evil-cross-lines t
        evil-snipe-scope 'buffer
        evil-want-fine-undo t)
@@ -97,14 +97,14 @@
 :PROPERTIES:
 :ID:       9c76ed39-ee3e-4e89-8713-ce3b77dc66dd
 :END:
-#+begin_src emacs-lisp :tangle yes
+#+begin_src emacs-lisp
 (global-evil-matchit-mode 1)
 #+end_src
 *** snippet
 :PROPERTIES:
 :ID:       522dd2b3-4c09-4ef8-81df-ce520e8959f2
 :END:
-#+begin_src emacs-lisp :tangle yes
+#+begin_src emacs-lisp
 ;; Nested snippets
 (after! yasnippet
   (setq! yas-triggers-in-field t))
@@ -117,7 +117,7 @@
 :ID:       91d88b8d-c942-4037-8411-6de47f2de9df
 :END:
 
-#+begin_src emacs-lisp :tangle yes
+#+begin_src emacs-lisp
 ;; Control which workspace new frame are initialized with when opened with emacsclient.
 ;; The default value +workspaces-associate-frame-fn creates a new workspace every time.
 ;; With nil, it just opens in some existing workspace.
@@ -128,7 +128,7 @@
 :ID:       e5879a87-628a-4e45-bc64-1e0cec4e1410
 :END:
 Note: I previously had a 'mbv/open-finder-here', but Doom actually provides that natively with '<leader> o o'.
-#+begin_src emacs-lisp :tangle yes
+#+begin_src emacs-lisp
 (defun mbv/run-kitty-here ()
   (interactive)
   (shell-command (concat "kitty --single-instance "
@@ -147,7 +147,7 @@ Note: I previously had a 'mbv/open-finder-here', but Doom actually provides that
 Based on https://github.com/brotzeit/rustic/issues/312#issuecomment-1113738865, while high gcmh-idle-delay can prevent gc from running while active, it can also cause memory pressure to accumulate enough that in cases where gc runs while active, it's worse than otherwise.
 
 Note: By default in Doom, this is set to auto. We could also play with the parameters of that.
-#+begin_src emacs-lisp :tangle yes
+#+begin_src emacs-lisp
 (setq! gcmh-idle-delay 'auto
        gcmh-low-cons-threshold (* 800 1000)           ;; Default value 800000
        gcmh-high-cons-threshold (* 33 1024 1024))         ;; Default value 33554432
@@ -160,11 +160,11 @@ Note: By default in Doom, this is set to auto. We could also play with the param
 :PROPERTIES:
 :ID:       4606322c-471e-4579-9ac4-2ce63506e971
 :END:
-#+begin_src emacs-lisp :tangle yes
+#+begin_src emacs-lisp
 (server-start)
 #+end_src
 *** Meta -> Super rebindings
-#+begin_src emacs-lisp :tangle yes
+#+begin_src emacs-lisp
 (map! "s-%" #'query-replace
       "C-s-%" #'query-replace-regexp)
 #+end_src
@@ -173,7 +173,7 @@ Note: By default in Doom, this is set to auto. We could also play with the param
 :PROPERTIES:
 :ID:       248fc78a-f917-4379-b852-a3dba2574724
 :END:
-#+begin_src emacs-lisp :tangle yes
+#+begin_src emacs-lisp
 (map! :after company
       :map company-active-map
      "C-l" #'company-complete-common-or-cycle
@@ -199,7 +199,7 @@ posframe.el itself does some caching-like stuff, see https://github.com/tumashu/
 Could be worth hooking into for debugging purposes.
 
 Running `vertico-posframe-cleanup` also fixes the issue when it occurs. Maybe run it occasionally on some timer? Would probably want to make it only happen when idle.
-#+begin_src emacs-lisp :tangle yes
+#+begin_src emacs-lisp
 (setq! consult-locate-args "locate -i"
        vertico-posframe-poshandler 'posframe-poshandler-frame-top-center
        vertico-posframe-truncate-lines t
@@ -214,7 +214,7 @@ Running `vertico-posframe-cleanup` also fixes the issue when it occurs. Maybe ru
 :END:
 Modify 'arxiv-get-pdf-add-bibtex-entry' to use different file name from bibtex key (add title to pdf file name).
 Maybe define a general function to rectify pdf file name for any entry, and call it after arxiv-get-pdf-add-bibtex-entry?
-#+begin_src emacs-lisp :tangle yes
+#+begin_src emacs-lisp
 (after! citar
   (setq! bibtex-completion-bibliography mbv/my-main-bib-file
          citar-bibliography mbv/my-main-bib-file
@@ -239,7 +239,7 @@ Maybe define a general function to rectify pdf file name for any entry, and call
 :PROPERTIES:
 :ID:       1a703448-20ea-48e7-8e38-3adba05dd374
 :END:
-#+begin_src emacs-lisp :tangle yes
+#+begin_src emacs-lisp
 (after! org-mode
   (setq! org-noter-hide-other nil
          org-noter-notes-search-path mbv/my-paper-notes-directory))
@@ -249,14 +249,14 @@ Maybe define a general function to rectify pdf file name for any entry, and call
 :PROPERTIES:
 :ID:       2e9cb8fe-74ad-4581-877d-60782eed5760
 :END:
-#+begin_src emacs-lisp :tangle yes
+#+begin_src emacs-lisp
 (setq! reftex-default-bibliography mbv/my-main-bib-file)
 #+end_src
 **** PDF viewer
 :PROPERTIES:
 :ID:       8d7e8cc1-648f-46c0-9337-fd129c854a97
 :END:
-#+begin_src emacs-lisp :tangle yes
+#+begin_src emacs-lisp
 (setq! +latex-viewers '(pdf-tools))
 ;; For synctex
 (setq TeX-source-correlate-start-server t)
@@ -272,7 +272,7 @@ Note that the cdlatex variables have to be given a characters ASCII code, ? conv
 
 According to https://lists.gnu.org/archive/html/emacs-orgmode/2011-10/msg00716.html, you have to restart emacs or run (cdlatex-reset-mode) after changing this config.
 
-#+begin_src emacs-lisp :tangle yes
+#+begin_src emacs-lisp
 ;; Use cdlatex over yasnippet (should still default back to yasnippet).
 (map! :map cdlatex-mode-map
       :i "TAB" #'cdlatex-tab)
@@ -349,7 +349,7 @@ According to https://lists.gnu.org/archive/html/emacs-orgmode/2011-10/msg00716.h
 :END:
 dvipng and dvisvgm do not support putting tikz code in previews. This can be done with imagemagick, but that's prone to bugs, especially around imagemagick updates.
 
-#+begin_src emacs-lisp :tangle yes
+#+begin_src emacs-lisp
 ;; -f forces latexmk to keep going on errors
 ;; -gg cleans all generated files before generating, in particular latexmk ALWAYS compiles the source even if nothing has changed.
 (setq org-latex-pdf-process '("latexmk -f -gg -pdf -%latex -interaction=nonstopmode -output-directory=%o %f"))
@@ -630,7 +630,7 @@ That said, the hydra provided by org-ref is quite nice...
 TODO: Figure out how to manage bib files directly in emacs; org-ref may be part of that.
 
 TODO: Rewrite this to use type citation instead of citation-reference. Then we don't have to do the manual format, it'll support global pre and post-fix. We should also find a way to record post-blank on parsing, and pass that to the citation.
-#+begin_src emacs-lisp :tangle yes
+#+begin_src emacs-lisp
 (after! org-ref
   (setq! org-ref-insert-cite-function 'org-cite-insert)
   (defun mbv/org-ref-v3-to-org-cite ()
@@ -679,7 +679,7 @@ TODO: Rewrite this to use type citation instead of citation-reference. Then we d
 :END:
 I really want org-noter-insert-note bound to "i", but I don't know how to do that.
 TODO: Make the insert functions also enter insert-mode in the org buffer.
-#+begin_src emacs-lisp :tangle yes
+#+begin_src emacs-lisp
 (map! :map org-noter-doc-mode-map
       "M-i" #'org-noter-insert-note
       "C-M-i" #'org-noter-insert-precise-note)
@@ -688,14 +688,14 @@ TODO: Make the insert functions also enter insert-mode in the org buffer.
 :PROPERTIES:
 :ID:       b436aa20-85bb-464a-bb78-00559f4fff16
 :END:
-#+begin_src emacs-lisp :tangle yes
+#+begin_src emacs-lisp
 (add-hook 'org-mode-hook 'org-fragtog-mode)
 #+end_src
 *** pdf-view
 :PROPERTIES:
 :ID:       c1fe9cd6-47ff-4ba9-b115-ce09e69fbc09
 :END:
-#+begin_src emacs-lisp :tangle yes
+#+begin_src emacs-lisp
   (setq! pdf-view-resize-factor 1.1
         pdf-view-continuous nil
         pdf-view-display-size 'fit-page)
@@ -706,7 +706,7 @@ TODO: Make the insert functions also enter insert-mode in the org buffer.
 *** rust
 TODO: adaptive-wrap-prefix-mode causes issues with rustic-mode, add hook to disable
 Might also want to disable smartparens-mode
-#+begin_src emacs-lisp :tangle yes
+#+begin_src emacs-lisp
 (setq! lsp-rust-analyzer-cargo-watch-command "clippy"
        lsp-inlay-hints-mode t
        lsp-rust-analyzer-display-lifetime-elision-hints-enable "skip_trivial"
@@ -726,25 +726,25 @@ Might also want to disable smartparens-mode
 :PROPERTIES:
 :ID:       91df0cdb-0c1c-4922-8af3-a104bcedb13a
 :END:
-#+begin_src emacs-lisp :tangle yes
+#+begin_src emacs-lisp
 (add-hook! csv-mode :append '(csv-align-mode csv-header-line))
 #+end_src
 ** LLM
 *** gptel
-#+begin_src emacs-lisp :tangle yes
+#+begin_src emacs-lisp
 (use-package! gptel
   :config
   (setq! gptel-model "llama3:latest"
          gptel-backend (gptel-make-ollama "mbv-desktop"
                                           :host "mbv-desktop:11434"
                                           :stream t
-                                          :models '("llama3:latest" "dolphin-mixtral:latest"))))
+                                          :models '("llama3:latest" "dolphin-mixtral:latest" "phi3"))))
 #+end_src
 ** ledger
 :PROPERTIES:
 :ID:       fd2d4160-2733-4f26-bd40-3ce1f6202325
 :END:
-#+begin_src emacs-lisp :tangle yes
+#+begin_src emacs-lisp
 (after! ledger-mode
   (setq! ledger-complete-in-steps t
          ledger-post-amount-alignment-column 62))
@@ -753,7 +753,7 @@ Might also want to disable smartparens-mode
 :PROPERTIES:
 :ID:       b0fafc69-1a25-468b-bd79-83067b889d39
 :END:
-#+begin_src emacs-lisp           :tangle yes
+#+begin_src emacs-lisp
 (setq! org-directory mbv/my-org-directory)
 (after! org
   (setq! org-src-window-setup 'split-window-below
@@ -778,7 +778,7 @@ Since org-roam is in our org directory, we don't currently use this.
 :PROPERTIES:
 :ID:       org-gtd-2024-04-05-16-13-44
 :END:
-#+begin_src emacs-lisp :tangle yes
+#+begin_src emacs-lisp
 (use-package! org-gtd
   :after org
   :init
@@ -854,7 +854,7 @@ Sets up org-id for consistent links that allow changing headlines/file locations
 :PROPERTIES:
 :ID:       ab27712b-6660-4129-a423-017b1204243a
 :END:
-#+begin_src emacs-lisp :tangle yes
+#+begin_src emacs-lisp
 (after! org-roam-mode
   (setq! org-roam-directory mbv/my-org-roam-directory
          org-roam-db-location (concat org-roam-directory "org-roam.db")
@@ -866,7 +866,7 @@ Sets up org-id for consistent links that allow changing headlines/file locations
 :PROPERTIES:
 :ID:       6e2498f5-cdb8-4aa6-8a9f-1507cc4d91c1
 :END:
-#+begin_src emacs-lisp :tangle yes
+#+begin_src emacs-lisp
 (add-hook! org-roam-mode (org-roam-bibtex-mode))
 #+end_src
 
@@ -904,7 +904,7 @@ TODO: Make this actually work well.
 :PROPERTIES:
 :ID:       b6c36a3c-d646-44d5-abd0-7fa7fbf620ec
 :END:
-#+begin_src emacs-lisp :tangle yes
+#+begin_src emacs-lisp
 (after! org-roam-server-mode
   (setq! org-roam-server-host "127.0.0.1"
          org-roam-server-port 8080
@@ -922,7 +922,7 @@ TODO: Make this actually work well.
 :PROPERTIES:
 :ID:       599f0c3f-3533-4e09-9c25-8615d045ef4f
 :END:
-#+begin_src emacs-lisp :tangle yes
+#+begin_src emacs-lisp
 (after! deft
   (setq! deft-recursive t
   deft-use-filter-string-for-filename t
@@ -960,7 +960,7 @@ It is still a Python script though.
 TODO: Set up imapnotify for syncing emails automatically. https://gitlab.com/shackra/goimapnotify
 
 TODO: Set up HU email.
-#+begin_src emacs-lisp :tangle yes
+#+begin_src emacs-lisp
 (setq mu4e-update-interval (* 10 60)) ; check mail every 10 minutes
 
 (set-email-account! "mvilladsen@pm.me"
@@ -996,10 +996,11 @@ Mads")
         (:name "Messages with images" :query "mime:image/*" :hide-unread t :key ?p)
         ))
 
+;; Not sure why this is necessary.
 (setq! mu4e-mu-binary "/etc/profiles/per-user/mvilladsen/bin/mu")
 ;; The mu search query used to count the number of 'interesting' mail to show in the mode line.
 (setq mu4e-alert-interesting-mail-query "flag:unread and not flag:trashed and not maildir:/arXiv/ and not maildir:'/All Mail/' and not maildir:/EAGER-GEN/")
-(mu4e-alert-set-default-style #'osx-notifier)
+;; (mu4e-alert-set-default-style #'osx-notifier)
 
 (setq mu4e-change-filenames-when-moving t ; avoid sync conflicts
       mu4e-compose-format-flowed t ; re-flow mail so it's not hard wrapped
