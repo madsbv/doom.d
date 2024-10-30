@@ -1,4 +1,5 @@
 #+title: Config
+#+STARTUP: show2levels
 * Notes
 ** Ideas
 *** Org-mode font lock optimization ideas
@@ -758,7 +759,8 @@ Might also want to disable smartparens-mode
 (after! org
   (setq! org-src-window-setup 'split-window-below
          org-refile-allow-creating-parent-nodes 'confirm
-         org-return-follows-link t))
+         org-return-follows-link t
+         org-tags-column -100))
 
 #+end_src
 *** Recursive org-agenda-files
