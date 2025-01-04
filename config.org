@@ -69,6 +69,7 @@
 (setq! doom-molokai-brighter-comments t)
 (setq! doom-molokai-brighter-modeline t)
 (setq! doom-theme 'doom-molokai)
+(menu-bar-mode -1)
 #+end_src
 *** evil
 :PROPERTIES:
