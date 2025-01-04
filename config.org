@@ -52,10 +52,14 @@
       user-mail-address "mvilladsen@pm.me")
 (setq! mbv/my-personal-directory "~/Dropbox/docs/"
        mbv/my-org-directory (concat mbv/my-personal-directory "org/")
+       mbv/my-org-gtd-directory (concat mbv/my-personal-directory "org-gtd/")
+       mbv/my-org-roam-directory (concat mbv/my-personal-directory "org-roam/")
        mbv/my-papers-directory (concat mbv/my-personal-directory "work/math-resources/sources/papers/")
-       mbv/my-org-roam-directory (concat mbv/my-org-directory "org-roam/")
        mbv/my-paper-notes-directory (concat mbv/my-org-roam-directory "paper-notes/")
-       mbv/my-main-bib-file (concat mbv/my-personal-directory "work/math-resources/sources/papers.bib"))
+       mbv/my-main-bib-file (concat mbv/my-personal-directory "work/math-resources/sources/papers.bib")
+
+       ;; mbv/my-agenda-files `(,mbv/my-org-directory ,mbv/my-org-roam-directory))
+       mbv/my-agenda-files `(,mbv/my-org-gtd-directory))
 #+end_src
 *** Basic UI
 #+begin_src emacs-lisp
@@ -207,6 +211,11 @@ Running `vertico-posframe-cleanup` also fixes the issue when it occurs. Maybe ru
        vertico-posframe-parameters
       '((left-fringe . 8)
         (right-fringe . 8)))
+
+; Just to make it easier to find by searching
+(defun mbv/posframe-cleanup ()
+  (interactive)
+  (vertico-posframe-cleanup))
 #+end_src
 ** Documents
 *** TODO biblio
@@ -229,8 +238,8 @@ Maybe define a general function to rectify pdf file name for any entry, and call
          bibtex-autokey-year-length 4
              bibtex-autokey-titlewords 0
          bibtex-autokey-name-year-separator ""
-         bibtex-autokey-name-case-convert-function 'upcase-initials)
-  (citar-org-roam-mode))
+         bibtex-autokey-name-case-convert-function 'upcase-initials))
+  ;; (citar-org-roam-mode))
 (map! :leader
       :prefix "r"
       "o" #'citar-open
@@ -720,6 +729,12 @@ Might also want to disable smartparens-mode
        lsp-ui-sideline-show-hover t
        lsp-ui-doc-enable nil)
 
+;; TODO: None of these seem to fix the issue that apheleia calls rustfmt without an --edition argument on save, which causes issues in async code. I'd prefer to always call rustfmt with --edition 2021, instead of relying on rustfmt.toml, but I'm not sure how.
+;; ;; (setq! rustic-rustfmt-config-alist '(("edition" "2021")))
+;; (setq! rustic-rustfmt-args '("--edition" "2021")
+;;  rust-rustfmt-switches '("--edition" "2021")
+;; lsp-rust-analyzer-rustfmt-extra-args "--edition 2021")
+
 (add-hook! rustic-mode #'turn-off-smartparens-mode)
 (appendq! +word-wrap-visual-modes '(rustic-mode))
 #+end_src
@@ -732,6 +747,9 @@ Might also want to disable smartparens-mode
 #+end_src
 ** LLM
 *** gptel
+:PROPERTIES:
+:ID:       52896d82-bab3-4897-a168-ec1fd3065801
+:END:
 #+begin_src emacs-lisp
 (use-package! gptel
   :config
@@ -763,7 +781,11 @@ Might also want to disable smartparens-mode
          org-tags-column -100))
 
 #+end_src
-*** Recursive org-agenda-files
+*** org-agenda
+#+begin_src emacs-lisp
+  (setq! org-agenda-files mbv/my-agenda-files)
+#+end_src
+
 Recursively check a list of directories, thanks to; https://www.reddit.com/r/orgmode/comments/6q6cdk/adding_files_to_the_agenda_list_recursively/
 To specify single files, if necessary, would have to append them to org-agenda-files separately.
 
@@ -786,8 +808,7 @@ Since org-roam is in our org directory, we don't currently use this.
   :init
   (setq org-gtd-update-ack "3.0.0")
   :config
-  (setq! org-gtd-directory (concat mbv/my-org-directory "gtd/"))
-  (setq! org-agenda-files `(,org-directory ,org-gtd-directory))
+  (setq! org-gtd-directory mbv/my-org-gtd-directory)
   (setq org-edna-use-inheritance t)
   (org-edna-mode)
 
@@ -842,7 +863,7 @@ Sets up org-id for consistent links that allow changing headlines/file locations
   (setq org-id-track-globally t)
   (setq org-id-locations-file (concat user-emacs-directory ".org-id-locations"))
   ;; Update id locations on startup
-  (org-id-update-id-locations)
+  (org-id-update-id-locations nil t)
 
   ;; Completion function for id's when running org-insert-link. Taken from https://emacs.stackexchange.com/questions/12391/insert-org-id-link-at-point-via-outline-path-completion
   (defun org-id-complete-link (&optional arg)
@@ -857,10 +878,13 @@ Sets up org-id for consistent links that allow changing headlines/file locations
 :ID:       ab27712b-6660-4129-a423-017b1204243a
 :END:
 #+begin_src emacs-lisp
-(after! org-roam-mode
-  (setq! org-roam-directory mbv/my-org-roam-directory
-         org-roam-db-location (concat org-roam-directory "org-roam.db")
-         org-roam-buffer-no-delete-other-windows t) ; make org-roam buffer sticky
+(use-package! org-roam
+  :custom
+  (org-roam-directory (file-truename mbv/my-org-roam-directory))
+  :config
+  (setq!
+         org-roam-db-location (concat org-roam-directory "org-roam.db"))
+         ;; org-roam-buffer-no-delete-other-windows t) ; make org-roam buffer sticky
   (org-roam-db-autosync-mode)
   (require 'org-roam-protocol))
 #+end_src
@@ -868,7 +892,7 @@ Sets up org-id for consistent links that allow changing headlines/file locations
 :PROPERTIES:
 :ID:       6e2498f5-cdb8-4aa6-8a9f-1507cc4d91c1
 :END:
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
 (add-hook! org-roam-mode (org-roam-bibtex-mode))
 #+end_src
 
@@ -906,7 +930,7 @@ TODO: Make this actually work well.
 :PROPERTIES:
 :ID:       b6c36a3c-d646-44d5-abd0-7fa7fbf620ec
 :END:
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
 (after! org-roam-server-mode
   (setq! org-roam-server-host "127.0.0.1"
          org-roam-server-port 8080
