@@ -750,12 +750,6 @@ Might also want to disable smartparens-mode
 #+begin_src emacs-lisp
 (add-hook! csv-mode :append '(csv-align-mode csv-header-line))
 #+end_src
-*** html
-`ws-butler-mode` formats/removes unnecessary whitespace. Further, `before-save-hook` by default includes `ws-butler-before-save`, which triggers on save whether the mode is enabled or not.
-This is an issue for Askama HTML templating.
-#+begin_src emacs-lisp :tangle yes
-(appendq! ws-butler-global-exempt-modes '(html-mode))
-#+end_src
 
 ** LLM
 *** gptel
