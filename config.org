@@ -742,7 +742,11 @@ Might also want to disable smartparens-mode
 #+end_src
 *** lua
 #+begin_src emacs-lisp
-(setq! lsp-clients-lua-language-server-install-dir (getenv "LUA_LANGUAGE_SERVER_INSTALL_DIR"))
+(setq! lsp-clients-lua-language-server-install-dir (concat (getenv "LUA_LANGUAGE_SERVER_INSTALL_DIR") "/share/lua-language-server")
+       lsp-clients-lua-language-server-main-location (concat lsp-clients-lua-language-server-install-dir "/main.lua")
+       lsp-clients-lua-language-server-bin (concat lsp-clients-lua-language-server-install-dir "/bin/lua-language-server")
+      )
+(setq! lsp-clients-lua-language-server-args  `("-E" ,(concat "--logpath=" (temporary-file-directory))))
 #+end_src
 *** csv-mode
 :PROPERTIES:
