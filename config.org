@@ -755,7 +755,16 @@ Might also want to disable smartparens-mode
 #+begin_src emacs-lisp
 (add-hook! csv-mode :append '(csv-align-mode csv-header-line))
 #+end_src
-
+*** lsp (general config)
+#+begin_src emacs-lisp :tangle yes
+(setq! lsp-headerline-breadcrumb-enable t
+       lsp-headerline-breadcrumb-enable-symbol-numbers t
+       lsp-inlay-hint-enable t
+       lsp-enable-semantic-highlighting t
+       lsp-semantic-tokens-enable t
+       lsp-ui-doc-enable t
+       lsp-enable-symbol-highlighting t)
+#+end_src
 ** LLM
 *** gptel
 :PROPERTIES:
