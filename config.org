@@ -13,14 +13,14 @@
 (setq tree-sitter-langs--bin-dir (concat tree-sitter-langs-grammar-dir "bin/"))
 (setq treesit-extra-load-path (append (list (tree-sitter-langs--bin-dir))))
 (defun tree-sitter-langs-build--fixup-shared-objects-for-treesit ()
-   "tree-sitter-langs-build releases grammars as LANG.so, but treesit needs libtree-sitter-LANG.so"
-   (dolist (file (directory-files (tree-sitter-langs--bin-dir) 'full
-                                  (concat "\\" (car tree-sitter-load-suffixes) "$")))
-     ;; make symlink libtree-sitter-c.so -> c.so
-     (make-symbolic-link file
-                         (concat (file-name-as-directory (file-name-directory file))
-                                 "libtree-sitter-"
-                                 (file-name-nondirectory file)))))
+  "tree-sitter-langs-build releases grammars as LANG.so, but treesit needs libtree-sitter-LANG.so"
+  (dolist (file (directory-files (tree-sitter-langs--bin-dir) 'full
+                                 (concat "\\" (car tree-sitter-load-suffixes) "$")))
+    ;; make symlink libtree-sitter-c.so -> c.so
+    (make-symbolic-link file
+                        (concat (file-name-as-directory (file-name-directory file))
+                                "libtree-sitter-"
+                                (file-name-nondirectory file)))))
 (tree-sitter-langs-build--fixup-shared-objects-for-treesit)
 #+end_src
 * Package installation
@@ -773,11 +773,11 @@ Might also want to disable smartparens-mode
 #+begin_src emacs-lisp
 (use-package! gptel
   :config
-  (setq! gptel-model "llama3:latest"
-         gptel-backend (gptel-make-ollama "mbv-desktop"
-                                          :host "mbv-desktop:11434"
+  (setq! gptel-model "deepseek-r1:14b"
+         gptel-backend (gptel-make-ollama "mbv-workstation"
+                                          :host "localhost:11434"
                                           :stream t
-                                          :models '("llama3:latest" "dolphin-mixtral:latest" "phi3"))))
+                                          :models '("deepseek-r1:14b" "qwen2.5-coder:14b-instruct-q6_K"))))
 #+end_src
 ** ledger
 :PROPERTIES:
