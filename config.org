@@ -832,6 +832,8 @@ Since org-roam is in our org directory, we don't currently use this.
   (setq org-edna-use-inheritance t)
   (org-edna-mode)
 
+  (setq! org-gtd-engage-prefix-width 25)
+
   (defun mu4e-org-gtd-store-and-capture()
     (interactive)
     (with-org-gtd-capture (call-interactively #'mu4e-org-store-and-capture)))
