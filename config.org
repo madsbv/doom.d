@@ -65,11 +65,17 @@
 #+begin_src emacs-lisp
 ;; enable word-wrap (almost) everywhere
 (+global-word-wrap-mode +1)
+
 (setq display-line-numbers-type 'visual)
-(setq! doom-molokai-brighter-comments t)
-(setq! doom-molokai-brighter-modeline t)
-(setq! doom-theme 'doom-molokai)
+
+(setq! doom-molokai-brighter-comments t
+       doom-molokai-brighter-modeline t
+       doom-theme 'doom-molokai)
+
+(setq! uniquify-buffer-name-style 'forward)
+
 (menu-bar-mode -1)
+
 (setq! diff-hl-update-async nil)
 #+end_src
 *** evil
@@ -721,7 +727,7 @@ Might also want to disable smartparens-mode
 #+begin_src emacs-lisp
 (setq! lsp-rust-analyzer-cargo-watch-command "clippy"
        lsp-inlay-hints-mode t
-       lsp-rust-features 'all
+       lsp-rust-features ["all"]
        lsp-rust-all-features t
        lsp-rust-full-docs t
        lsp-rust-analyzer-display-lifetime-elision-hints-enable "skip_trivial"
