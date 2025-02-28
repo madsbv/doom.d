@@ -799,7 +799,7 @@ Attempt at fixing rust-analyzer issue where it starts erroring on every action i
          gptel-backend (gptel-make-ollama "mbv-workstation"
                                           :host "localhost:11434"
                                           :stream t
-                                          :models '("deepseek-r1:14b" "qwen2.5-coder:14b-instruct-q6_K"))))
+                                          :models '(deepseek-r1:14b qwen2.5-coder:14b-instruct-q6_K qwen2.5:14b))))
 #+end_src
 ** ledger
 :PROPERTIES:
