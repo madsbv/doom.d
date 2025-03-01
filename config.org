@@ -721,10 +721,18 @@ TODO: Make the insert functions also enter insert-mode in the org buffer.
       :nv "`" #'pdf-view-jump-to-register)
 #+end_src
 ** Programming
+*** apheleia (format on save)
+#+begin_src emacs-lisp :tangle yes
+(add-to-list 'apheleia-mode-alist '(web-mode . lsp) )
+(add-to-list 'apheleia-mode-alist '(html-mode . lsp) )
+(add-to-list 'apheleia-mode-alist '(html-ts-mode . lsp) )
+(add-to-list 'apheleia-formatters '(rustfmt "rustfmt" "--quiet" "--edition" "2024" "--emit" "stdout") )
+#+end_src
 *** rust
 TODO: adaptive-wrap-prefix-mode causes issues with rustic-mode, add hook to disable
 Might also want to disable smartparens-mode
 #+begin_src emacs-lisp
+(add-to-list 'auto-mode-alist '("\\.rs\\'" . rustic-mode))
 (setq! lsp-rust-analyzer-cargo-watch-command "clippy"
        lsp-rust-features ["all"]
        lsp-rust-all-features t
@@ -736,13 +744,8 @@ Might also want to disable smartparens-mode
        lsp-rust-analyzer-display-parameter-hints nil
        lsp-rust-analyzer-display-reborrow-hints nil)
 
-;; TODO: None of these seem to fix the issue that apheleia calls rustfmt without an --edition argument on save, which causes issues in async code. I'd prefer to always call rustfmt with --edition 2021, instead of relying on rustfmt.toml, but I'm not sure how.
-;; ;; (setq! rustic-rustfmt-config-alist '(("edition" "2021")))
-;; (setq! rustic-rustfmt-args '("--edition" "2021")
-;;  rust-rustfmt-switches '("--edition" "2021")
-;; lsp-rust-analyzer-rustfmt-extra-args "--edition 2021")
-
-(add-hook! rustic-mode #'turn-off-smartparens-mode)
+;; NOTE: I forgot why I added this, if something breaks, consider turning smartparens back off.
+;; (add-hook! rustic-mode #'turn-off-smartparens-mode)
 (appendq! +word-wrap-visual-modes '(rustic-mode))
 #+end_src
 *** lua
