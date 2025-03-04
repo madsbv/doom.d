@@ -748,8 +748,12 @@ Might also want to disable smartparens-mode
        lsp-rust-analyzer-display-parameter-hints nil
        lsp-rust-analyzer-display-reborrow-hints nil)
 
+;; TODO: Consider enabling treesitter integration:
+;; https://github.com/emacs-rustic/rustic?tab=readme-ov-file#tree-sitter
+
 ;; NOTE: I forgot why I added this, if something breaks, consider turning smartparens back off.
 ;; (add-hook! rustic-mode #'turn-off-smartparens-mode)
+
 (appendq! +word-wrap-visual-modes '(rustic-mode))
 #+end_src
 *** lua
