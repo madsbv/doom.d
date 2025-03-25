@@ -263,6 +263,10 @@ Maybe define a general function to rectify pdf file name for any entry, and call
          org-noter-notes-search-path mbv/my-paper-notes-directory))
 #+end_src
 *** latex
+For some reason this doesn't entirely work. It seems to set the correct mode, but not all features work as expected unless `LaTeX-mode` is called manually.
+#+begin_src emacs-lisp :tangle yes
+(add-to-list 'auto-mode-alist '("\\.tex\\'" . LaTeX-mode))
+#+end_src
 **** RefTeX
 :PROPERTIES:
 :ID:       2e9cb8fe-74ad-4581-877d-60782eed5760
