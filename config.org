@@ -727,10 +727,10 @@ TODO: Make the insert functions also enter insert-mode in the org buffer.
 ** Programming
 *** apheleia (format on save)
 #+begin_src emacs-lisp :tangle yes
-(add-to-list 'apheleia-mode-alist '(web-mode . lsp) )
-(add-to-list 'apheleia-mode-alist '(html-mode . lsp) )
-(add-to-list 'apheleia-mode-alist '(html-ts-mode . lsp) )
-(add-to-list 'apheleia-formatters '(rustfmt "rustfmt" "--quiet" "--edition" "2024" "--emit" "stdout") )
+(setq-hook! 'web-mode-hook +format-with 'lsp)
+(setq-hook! 'html-mode +format-with 'lsp) 
+(setq-hook! 'html-ts-mode +format-with 'lsp) 
+(after! rustic-mode (set-formatter! 'rustfmt '("rustfmt" "--quiet" "--edition" "2024" "--emit" "stdout") :modes '(rustic-mode)))
 #+end_src
 *** rust
 TODO: adaptive-wrap-prefix-mode causes issues with rustic-mode, add hook to disable
