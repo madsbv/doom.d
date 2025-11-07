@@ -768,6 +768,16 @@ Might also want to disable smartparens-mode
 #+begin_src emacs-lisp :tangle yes
 (setq lsp-pyright-langserver-command "basedpyright-langserver --stdio")
 #+end_src
+*** Fortran
+#+begin_src emacs-lisp :tangle yes
+(use-package! fortran
+  :init
+  (setq fortran-line-length 120)
+  :config
+  (setq fortran-comment-region "!"
+        fortran-analyze-depth 1000)
+  )
+#+end_src
 *** csv-mode
 :PROPERTIES:
 :ID:       91df0cdb-0c1c-4922-8af3-a104bcedb13a
