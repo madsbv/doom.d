@@ -40,6 +40,7 @@
 (package! evil-matchit)
 (package! just-mode)
 (package! gptel)
+(package! powershell)
 #+end_src
 * Config
 ** Emacs
@@ -746,7 +747,7 @@ Might also want to disable smartparens-mode
        lsp-rust-analyzer-display-lifetime-elision-hints-use-parameter-names nil
        lsp-rust-analyzer-display-closure-return-type-hints t
        lsp-rust-analyzer-display-parameter-hints nil
-       lsp-rust-analyzer-display-reborrow-hints nil)
+       lsp-rust-analyzer-display-reborrow-hints "never")
 
 ;; TODO: Consider enabling treesitter integration:
 ;; https://github.com/emacs-rustic/rustic?tab=readme-ov-file#tree-sitter
