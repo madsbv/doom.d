@@ -73,7 +73,7 @@
        doom-molokai-brighter-modeline t
        doom-theme 'doom-molokai)
 
-(setq! uniquify-buffer-name-style 'forward)
+(setq! uniquify-buffer-name-style 'post-forward-angle-brackets)
 
 (menu-bar-mode -1)
 
