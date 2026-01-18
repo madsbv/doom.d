@@ -733,6 +733,11 @@ TODO: Make the insert functions also enter insert-mode in the org buffer.
 (setq-hook! 'html-ts-mode +format-with 'lsp) 
 (after! rustic-mode (set-formatter! 'rustfmt '("rustfmt" "--quiet" "--edition" "2024" "--emit" "stdout") :modes '(rustic-mode)))
 #+end_src
+*** magit
+#+begin_src emacs-lisp :tangle yes
+(use-package forge
+  :after magit)
+#+end_src
 *** rust
 TODO: adaptive-wrap-prefix-mode causes issues with rustic-mode, add hook to disable
 Might also want to disable smartparens-mode
@@ -768,6 +773,13 @@ Might also want to disable smartparens-mode
 *** python
 #+begin_src emacs-lisp :tangle yes
 (setq lsp-pyright-langserver-command "basedpyright-langserver --stdio")
+(after! python
+  (set-formatter! 'ruff :modes '(python-mode python-ts-mode)))
+#+end_src
+*** yaml
+yaml-ts-mode is just bad for some reason, and doesn't respect indent settings.
+#+begin_src emacs-lisp :tangle yes
+(add-to-list 'auto-mode-alist '("\\.ya?ml\\'" . yaml-mode))
 #+end_src
 *** Fortran
 #+begin_src emacs-lisp :tangle yes
@@ -874,13 +886,21 @@ Since org-roam is in our org directory, we don't currently use this.
 (use-package! org-gtd
   :after org
   :init
-  (setq org-gtd-update-ack "3.0.0")
-  :config
+  (setq org-gtd-update-ack "4.0.0")
   (setq! org-gtd-directory mbv/my-org-gtd-directory)
+  :config
   (setq org-edna-use-inheritance t)
   (org-edna-mode)
 
-  (setq! org-gtd-engage-prefix-width 25)
+  (setq! org-gtd-engage-prefix-width 25
+         org-todo-keywords '((sequence "TODO" "NEXT" "WAIT" "|" "DONE" "CNCL")))
+
+  (setopt org-gtd-keyword-mapping
+          '((todo . "TODO")
+            (next . "NEXT")
+            (wait . "WAIT")
+            (done . "DONE")
+            (canceled . "CNCL")))
 
   (defun mu4e-org-gtd-store-and-capture()
     (interactive)
